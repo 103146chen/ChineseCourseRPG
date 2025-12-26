@@ -70,7 +70,7 @@
     }
   ],
   "scenes": {
-    "intro_1": {
+    "intro": {
       "bg": "images/bg_intro.png",
       "bgm": "audio/bgm_tense.mp3",
       "dialogues": [
