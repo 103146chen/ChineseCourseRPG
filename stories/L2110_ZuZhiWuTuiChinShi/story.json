@@ -1,6 +1,6 @@
 {
     "config": {
-        "title": "燭之武退秦師：危城舌戰 (完整版)",
+        "title": "燭之武退秦師：危城舌戰 (完整修復版)",
         "stats": [
             { "id": "trust", "name": "秦伯好感", "init": 10, "color": "#eebb44" },
             { "id": "courage", "name": "膽識", "init": 20, "color": "#cc4444" },
@@ -11,7 +11,7 @@
         {
             "id": "perfect_success",
             "title": "【完美結局：千古名臣】",
-            "desc": "你不僅勸退秦師，更促成秦鄭結盟，秦國留下杞子、逢孫、楊孫三將戍守。晉國隨後撤軍。你的一席話，改寫了春秋局勢。",
+            "desc": "你不僅勸退秦師，更促成秦鄭結盟。秦國留下杞子、逢孫、楊孫三將戍守。晉國隨後撤軍。你的一席話，改寫了春秋局勢。",
             "quote": "「一言而退秦師，謀國之善者也。」",
             "image": "images/bg_intro.png",
             "priority": 100,
@@ -28,7 +28,7 @@
             "image": "images/bg_ch9.png",
             "priority": 60,
             "conditions": [
-                { "stat": "trust", "op": ">=", "val": 50 }
+                { "stat": "trust", "op": ">=", "val": 40 }
             ]
         },
         {
@@ -39,7 +39,7 @@
             "image": "images/bg_ch1.png",
             "priority": 40,
             "conditions": [
-                { "stat": "trust", "op": "<", "val": 50 }
+                { "stat": "trust", "op": "<", "val": 40 }
             ]
         },
         {
@@ -106,24 +106,25 @@
             ],
             "choices": [
                 {
-                    "text": "A. 抱怨推辭：「臣之壯也，猶不如人；今老矣，無能為也已。」",
+                    "text": "抱怨推辭：「臣之壯也，猶不如人；今老矣，無能為也已。」",
                     "effects": { "wisdom": 5 },
                     "nextScene": "scene_apology"
                 },
                 {
-                    "text": "B. 斷然拒絕：「早知今日何必當初？我不去！」",
+                    "text": "斷然拒絕：「早知今日何必當初？我不去！」",
                     "effects": { "courage": -10 },
-                    "nextScene": "scene_refuse_confirm"
+                    "nextScene": "scene_refuse_reaction"
                 }
             ]
         },
-        "scene_refuse_confirm": {
+        "scene_refuse_reaction": {
             "bg": "images/bg_ch2.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
-                "鄭文公愣住了，眼中閃過絕望。",
-                "你轉身欲走，但身後的啜泣聲和城外的戰鼓聲交織在一起。",
-                "這真的是你想要的結局嗎？"
+                "<b>【過場：君王的絕望】</b>",
+                "你轉身欲走，鄭文公癱坐在椅子上，掩面嘆息。",
+                "殿外的戰鼓聲越來越大，宮女們在角落啜泣。",
+                "你停下腳步，心中閃過一絲不忍。這真的是你想要的結局嗎？"
             ],
             "choices": [
                 {
@@ -134,17 +135,18 @@
                 {
                     "text": "狠心離開（觸發失敗結局）",
                     "effects": { "courage": -100 },
-                    "nextScene": "coward_end"
+                    "nextScene": "scene_coward_fail"
                 }
             ]
         },
-        "coward_end": {
+        "scene_coward_fail": {
             "bg": "images/bg_ch1.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
+                "<b>【劇情結束】</b>",
                 "你回到了馬廄，閉門不出。",
-                "三日後，秦晉聯軍攻破城門。鄭國滅亡，而你也隨之化為歷史的塵埃。",
-                "沒有人知道，這世上曾有一個叫燭之武的人，本有機會拯救這一切..."
+                "三日後，秦晉聯軍攻破城門。鄭文公自縊，鄭國滅亡。",
+                "而你也隨之化為歷史的塵埃。"
             ],
             "choices": [
                 {
@@ -166,11 +168,6 @@
                 {
                     "text": "接下任務：「老臣願往。」",
                     "effects": { "courage": 20, "wisdom": 10 },
-                    "nextScene": "scene_rope"
-                },
-                {
-                    "text": "無奈嘆息：「為了鄭國百姓，我去。」",
-                    "effects": { "trust": 10, "wisdom": 10 },
                     "nextScene": "scene_rope"
                 }
             ]
@@ -229,11 +226,6 @@
                     "text": "整理衣冠，昂首步入",
                     "effects": { "trust": 5 },
                     "nextScene": "scene_tent_start"
-                },
-                {
-                    "text": "面帶微笑，從容步入",
-                    "effects": { "wisdom": 5 },
-                    "nextScene": "scene_tent_start"
                 }
             ]
         },
@@ -247,13 +239,8 @@
             ],
             "choices": [
                 {
-                    "text": "尷尬地整理衣服",
-                    "effects": { "trust": -10, "courage": -5 },
-                    "nextScene": "scene_tent_start"
-                },
-                {
-                    "text": "強裝鎮定",
-                    "effects": { "trust": -5 },
+                    "text": "尷尬地整理衣服，進入大帳",
+                    "effects": { "trust": -15, "courage": -5 },
                     "nextScene": "scene_tent_start"
                 }
             ]
@@ -268,14 +255,19 @@
             ],
             "choices": [
                 {
-                    "text": "A. 示弱（經典）：秦、晉圍鄭，鄭既知亡矣。",
+                    "text": "以退為進（文本）：「秦、晉圍鄭，鄭既知亡矣。」",
                     "effects": { "wisdom": 10, "trust": 20 },
                     "nextScene": "reaction_good_start"
                 },
                 {
-                    "text": "B. 質問（激進）：秦國為何要幫助晉國作惡？",
+                    "text": "質問（激進）：「秦國為何要幫助晉國作惡？」",
                     "effects": { "trust": -20, "courage": 10 },
                     "nextScene": "reaction_bad_start"
+                },
+                {
+                    "text": "乞求（懦弱）：「求大王開恩，放過我們吧！」",
+                    "effects": { "trust": -20, "wisdom": -10 },
+                    "nextScene": "reaction_weak_start"
                 }
             ]
         },
@@ -283,6 +275,7 @@
             "bg": "images/bg_ch5_rich.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
+                "<b>【過場：引起興趣】</b>",
                 "秦穆公聽你承認鄭國將亡，緊繃的臉色稍微緩和了一些。",
                 "秦穆公：「既然知道要亡，那還有什麼好說的？」",
                 "你成功讓他放下了戒心，願意聽你說下去。"
@@ -292,11 +285,6 @@
                     "text": "趁機展開地圖",
                     "effects": { "wisdom": 5 },
                     "nextScene": "scene_logic_geo"
-                },
-                {
-                    "text": "拱手進言",
-                    "effects": { "trust": 5 },
-                    "nextScene": "scene_logic_geo"
                 }
             ]
         },
@@ -304,6 +292,7 @@
             "bg": "images/bg_ch5_rich.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
+                "<b>【過場：秦伯震怒】</b>",
                 "秦穆公大怒：「大膽狂徒！死到臨頭還敢教訓寡人？」",
                 "兩旁的刀斧手向前一步，氣氛瞬間降至冰點。",
                 "你必須立刻挽回局面，否則必死無疑。"
@@ -317,21 +306,38 @@
                 {
                     "text": "繼續強硬對抗",
                     "effects": { "trust": -50 },
-                    "nextScene": "failed_negotiation"
+                    "nextScene": "scene_execution"
                 }
             ]
         },
-        "failed_negotiation": {
+        "reaction_weak_start": {
+             "bg": "images/bg_ch5_rich.png",
+             "bgm": "audio/bgm_tense.mp3",
+             "dialogues": [
+                 "<b>【過場：遭受輕視】</b>",
+                 "秦穆公冷哼一聲：「戰場之上，何來憐憫？你若只會哭訴，就滾出去吧。」",
+                 "你的開場非常糟糕，如果不趕快提出具體利益，談判將會破裂。"
+             ],
+             "choices": [
+                 {
+                     "text": "擦乾眼淚，談論利弊",
+                     "effects": { "wisdom": 5 },
+                     "nextScene": "scene_logic_geo"
+                 }
+             ]
+        },
+        "scene_execution": {
             "bg": "images/bg_ch1.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
+                "<b>【劇情結束】</b>",
                 "秦穆公失去了耐心，揮手道：「拖出去斬了！」",
                 "你被武士架出大帳。你看著天上的明月，心中充滿了遺憾。",
                 "談判失敗，鄭國的命運也就此終結。"
             ],
             "choices": [
                 {
-                    "text": "查看結局",
+                    "text": "查看結局評價",
                     "effects": {},
                     "nextScene": "end_calc"
                 }
@@ -348,14 +354,14 @@
             ],
             "choices": [
                 {
-                    "text": "A. 點破弊端：焉用亡鄭以陪鄰？鄰之厚，君之薄也。",
+                    "text": "點破弊端（文本）：「焉用亡鄭以陪鄰？鄰之厚，君之薄也。」",
                     "effects": { "wisdom": 15, "trust": 15 },
                     "nextScene": "reaction_geo_success"
                 },
                 {
-                    "text": "B. 情感勒索：鄭國百姓很可憐，求大王放過。",
-                    "effects": { "wisdom": -5, "trust": -5 },
-                    "nextScene": "reaction_geo_weak"
+                    "text": "胡亂分析：「鄭國土地貧瘠，你要了也沒用。」",
+                    "effects": { "wisdom": -10, "trust": -5 },
+                    "nextScene": "reaction_geo_fail"
                 }
             ]
         },
@@ -363,39 +369,30 @@
             "bg": "images/bg_ch6.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
+                "<b>【過場：切中要害】</b>",
                 "這句話如同一記重錘敲在秦穆公心上。",
                 "他看著地圖，眉頭深鎖：確實，鄭國與秦國中間隔著晉國。滅了鄭國，土地全是晉國的。",
                 "「晉國變強，就等於秦國變弱……」他低聲自語。"
             ],
             "choices": [
                 {
-                    "text": "觀察他的表情",
+                    "text": "乘勝追擊，提出利益",
                     "effects": { "wisdom": 5 },
-                    "nextScene": "scene_logic_benefit"
-                },
-                {
-                    "text": "準備下一波攻勢",
-                    "effects": { "courage": 5 },
                     "nextScene": "scene_logic_benefit"
                 }
             ]
         },
-        "reaction_geo_weak": {
+        "reaction_geo_fail": {
             "bg": "images/bg_ch6.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
-                "秦穆公冷哼一聲：「戰場之上，何來憐憫？若無利可圖，寡人為何要退兵？」",
-                "你的哀求策略無效，反而讓他覺得你軟弱可欺。",
-                "（好感度下降，必須趕快提出實質利益）"
+                "<b>【過場：邏輯漏洞】</b>",
+                "秦穆公大笑：「鄭國地處中原，商賈雲集，你竟說土地貧瘠？當我是傻子嗎？」",
+                "你的謊言被識破了，氣氛變得尷尬。"
             ],
             "choices": [
                 {
-                    "text": "趕緊改口談利益",
-                    "effects": { "wisdom": 5 },
-                    "nextScene": "scene_logic_benefit"
-                },
-                {
-                    "text": "不知所措",
+                    "text": "趕緊改口：「我是說……對秦國來說難以管理。」",
                     "effects": { "trust": -10 },
                     "nextScene": "scene_logic_benefit"
                 }
@@ -411,12 +408,12 @@
             ],
             "choices": [
                 {
-                    "text": "A. 東道主（經典）：行李之往來，共其乏困。",
+                    "text": "東道主（文本）：「行李之往來，共其乏困。」",
                     "effects": { "wisdom": 15, "trust": 15 },
                     "nextScene": "reaction_benefit_success"
                 },
                 {
-                    "text": "B. 割地賠款：我們願意把鄭國的一半土地給你。",
+                    "text": "割地賠款：「我們願意把鄭國的一半土地給你。」",
                     "effects": { "wisdom": -10, "trust": -10 },
                     "nextScene": "reaction_benefit_fail"
                 }
@@ -426,12 +423,13 @@
             "bg": "images/bg_ch7.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
-                "秦穆公大笑：「隔著晉國，你要怎麼割地給我？飛地嗎？簡直荒謬！」",
+                "<b>【過場：荒謬的提議】</b>",
+                "秦穆公反問：「隔著晉國，你要怎麼割地給我？飛地嗎？簡直荒謬！」",
                 "你的提議缺乏現實考量，秦穆公對你的評價大幅降低。"
             ],
             "choices": [
                 {
-                    "text": "亦或是...",
+                    "text": "趕緊提出替代方案",
                     "effects": {},
                     "nextScene": "scene_logic_trust"
                 }
@@ -441,18 +439,14 @@
             "bg": "images/bg_ch7.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
+                "<b>【過場：利益誘惑】</b>",
                 "「若是留下鄭國，作為秦國東方使者的休息站，供應物資，這對大王有什麼壞處呢？」",
                 "秦穆公眼中閃過一絲貪婪。不費一兵一卒就能得到一個免費的補給站，這筆生意很划算。"
             ],
             "choices": [
                 {
-                    "text": "乘勝追擊",
+                    "text": "接著談論信任問題",
                     "effects": { "courage": 5 },
-                    "nextScene": "scene_logic_trust"
-                },
-                {
-                    "text": "觀察晉國反應",
-                    "effects": { "wisdom": 5 },
                     "nextScene": "scene_logic_trust"
                 }
             ]
@@ -468,12 +462,12 @@
             ],
             "choices": [
                 {
-                    "text": "A. 具體事實：朝濟而夕設版焉，君之所知也。",
+                    "text": "具體事實（文本）：「朝濟而夕設版焉，君之所知也。」",
                     "effects": { "wisdom": 15, "trust": 15 },
                     "nextScene": "reaction_trust_success"
                 },
                 {
-                    "text": "B. 籠統謾罵：晉國人都是騙子！",
+                    "text": "單純謾罵：「晉國人都是騙子！壞蛋！」",
                     "effects": { "trust": -5 },
                     "nextScene": "reaction_trust_weak"
                 }
@@ -483,8 +477,9 @@
             "bg": "images/bg_ch8.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
+                "<b>【過場：喚醒舊怨】</b>",
                 "提到「焦、瑕」二地，秦穆公的臉色瞬間陰沈下來。",
-                "當年他幫助晉惠公回國，晉惠公承諾割地，結果過河拆橋。",
+                "當年他幫助晉惠公回國，晉惠公承諾割地，結果剛過河回國，晚上就築牆拒守。",
                 "這段往事成功勾起了秦穆公的怒火。"
             ],
             "choices": [
@@ -499,9 +494,9 @@
             "bg": "images/bg_ch8.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
+                "<b>【過場：說服力不足】</b>",
                 "秦穆公皺眉：「國家之間本就是爾虞我詐，這算什麼理由？」",
-                "你的罵街式外交顯然沒有說服力。",
-                "（必須立刻用更強的理由補救）"
+                "你的罵街式外交顯然沒有說服力，你需要舉出具體例證。"
             ],
             "choices": [
                 {
@@ -522,12 +517,12 @@
             ],
             "choices": [
                 {
-                    "text": "A. 直指要害：若不闕秦，將焉取之？唯君圖之！",
+                    "text": "直指要害（文本）：「若不闕秦，將焉取之？唯君圖之！」",
                     "effects": { "wisdom": 20, "trust": 20 },
                     "nextScene": "reaction_threat_success"
                 },
                 {
-                    "text": "B. 跪地痛哭：大王救命啊！",
+                    "text": "跪地痛哭：「大王救命啊！我不想死！」",
                     "effects": { "trust": -10 },
                     "nextScene": "reaction_threat_fail"
                 }
@@ -537,6 +532,7 @@
             "bg": "images/bg_intro.png",
             "bgm": "audio/bgm_court.mp3",
             "dialogues": [
+                "<b>【過場：大夢初醒】</b>",
                 "這句話徹底擊碎了秦穆公的猶豫。",
                 "晉國貪得無厭，東邊吃完了，肯定往西邊吃（秦國）。",
                 "「闕秦以利晉」，這是在自殺啊！",
@@ -554,6 +550,7 @@
             "bg": "images/bg_ch9.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
+                "<b>【過場：崩潰】</b>",
                 "在最後關頭，你崩潰了。",
                 "秦穆公看著痛哭流涕的你，滿臉嫌惡。",
                 "「帶下去。」他冷冷地說。"
@@ -562,7 +559,7 @@
                 {
                     "text": "不要啊！",
                     "effects": { "trust": -100 },
-                    "nextScene": "failed_negotiation"
+                    "nextScene": "scene_execution"
                 }
             ]
         },
