@@ -13,7 +13,7 @@
             "title": "【結局：家破人亡】",
             "desc": "亂世無情，你失去了一切。這是一個令人心碎的悲劇。",
             "quote": "「覆巢之下，安有完卵？」",
-            "image": "images/bg_ch6.jpg",
+            "image": "images/bg_ch6.png",
             "priority": 100,
             "conditions": [ { "stat": "family", "op": "<=", "val": 0 } ]
         },
@@ -22,7 +22,7 @@
             "title": "【結局：捨生取義】",
             "desc": "你的頭顱被懸掛在城門之上，但你的雙眼依然圓睜。百年之後，你的名字成為讀書人心中不滅的火焰。",
             "quote": "「孔曰成仁，孟曰取義。」",
-            "image": "images/bg_ch8.jpg",
+            "image": "images/bg_ch8.png",
             "priority": 90,
             "conditions": [ { "stat": "integrity", "op": ">=", "val": 100 } ]
         },
@@ -31,7 +31,7 @@
             "title": "【完美結局：萬世師表】",
             "desc": "你的一生是所有讀書人的典範。你的《日知錄》流傳千古，顧炎武引你為知己。",
             "quote": "「博學於文，行己有恥。」",
-            "image": "images/bg_ch7.jpg",
+            "image": "images/bg_ch7.png",
             "priority": 50,
             "conditions": [ { "stat": "integrity", "op": ">=", "val": 90 } ]
         },
@@ -40,7 +40,7 @@
             "title": "【結局：長樂老再世】",
             "desc": "你兩世為人，都選擇了利益。你的家族或許富可敵國，但在史書上，你永遠是那個反面教材。",
             "quote": "「士大夫之無恥，是謂國恥。」",
-            "image": "images/bg_ch1.jpg",
+            "image": "images/bg_ch1.png",
             "priority": 40,
             "conditions": [
                 { "stat": "power", "op": ">=", "val": 80 },
@@ -52,7 +52,7 @@
             "title": "【結局：亂世松柏】",
             "desc": "雖然一生清貧，屢遭磨難，但你守住了讀書人的底線。後世提及那個黑暗的時代，都會想起你。",
             "quote": "「彼眾昏之日，固未嘗無獨醒之人也。」",
-            "image": "images/bg_ch9.jpg",
+            "image": "images/bg_ch9.png",
             "priority": 30,
             "conditions": [ { "stat": "integrity", "op": ">", "val": 60 } ]
         },
@@ -61,14 +61,14 @@
             "title": "【結局：隨波逐流】",
             "desc": "你在夾縫中生存了下來。沒有大惡，也無大善。你是歷史長河中沈默的大多數。",
             "quote": "「無恥之恥，無恥矣。」",
-            "image": "images/bg_ch4.jpg",
+            "image": "images/bg_ch4.png",
             "priority": 0,
             "conditions": [] 
         }
     ],
     "scenes": {
         "intro": {
-            "bg": "images/bg_intro.jpg",
+            "bg": "images/bg_intro.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
                 "<b>【序章：亂世的開端】</b><br>唐朝末年，長安城的繁華已成過往雲煙。你年輕時曾以此為傲，如今卻只見滿目瘡痍。",
@@ -90,7 +90,7 @@
             ]
         },
         "ch1": {
-            "bg": "images/bg_ch1.jpg",
+            "bg": "images/bg_ch1.png",
             "bgm": "audio/bgm_court.mp3",
             "dialogues": [
                 "<b>【第一章：初入官場】</b><br>你憑藉才華考取了功名，在一個節度使麾下任職。這是一個肥缺，但也充滿誘惑。",
@@ -112,7 +112,7 @@
             ]
         },
         "ch2": {
-            "bg": "images/bg_ch2.jpg",
+            "bg": "images/bg_ch2.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
                 "<b>【第二章：長樂老的影子】</b><br>數年後，節度使叛變稱帝。他需要文人來寫「勸進表」，歌頌他的功德。",
@@ -134,7 +134,7 @@
             ]
         },
         "ch3": {
-            "bg": "images/bg_ch3.jpg",
+            "bg": "images/bg_ch3.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
                 "<b>【第三章：變換的旗幟】</b><br>短短十年間，你所在的城池換了三個主人。梁、唐、晉、漢、周……朝代像走馬燈一樣更換。",
@@ -156,7 +156,7 @@
             ]
         },
         "ch4": {
-            "bg": "images/bg_ch4.jpg",
+            "bg": "images/bg_ch4.png",
             "bgm": "audio/bgm_calm.mp3",
             "dialogues": [
                 "<b>【第四章：晚年的回眸】</b><br>五代的亂世終於要結束了，趙匡胤在陳橋驛黃袍加身，建立了大宋。",
@@ -178,7 +178,7 @@
             ]
         },
         "transition": {
-            "bg": "images/bg_transition.jpg",
+            "bg": "images/bg_transition.png",
             "bgm": "audio/bgm_wind.mp3",
             "dialogues": [
                 "<b>【歲月流轉 · 七百年後】</b><br>時光荏苒，滄海桑田。五代的烽火早已熄滅，大宋、大元、大明相繼興起又衰落。",
@@ -202,7 +202,7 @@
             ]
         },
         "ch5_rich": {
-            "bg": "images/bg_ch5_rich.jpg",
+            "bg": "images/bg_ch5_rich.png",
             "bgm": "audio/bgm_court.mp3",
             "dialogues": [
                 "<b>【第五章：世家子弟】</b><br>因為先祖善於鑽營，你的家族成為了江南望族，田產萬頃。",
@@ -219,7 +219,7 @@
             ]
         },
         "ch5_poor": {
-            "bg": "images/bg_ch5_poor.jpg",
+            "bg": "images/bg_ch5_poor.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
                 "<b>【第五章：寒門傲骨】</b><br>因為先祖堅持氣節，你的家族屢遭貶謫，如今已是家徒四壁。",
@@ -235,7 +235,7 @@
             ]
         },
         "ch6": {
-            "bg": "images/bg_ch6.jpg",
+            "bg": "images/bg_ch6.png",
             "bgm": "audio/bgm_crisis.mp3",
             "dialogues": [
                 "<b>【第六章：剃髮令】</b><br>清軍攻佔江南，頒布了嚴酷的「剃髮令」：留頭不留髮，留髮不留頭。",
@@ -257,7 +257,7 @@
             ]
         },
         "ch7": {
-            "bg": "images/bg_ch7.jpg",
+            "bg": "images/bg_ch7.png",
             "bgm": "audio/bgm_calm.mp3",
             "dialogues": [
                 "<b>【第七章：博學鴻儒】</b><br>數十年過去，清朝統治漸趨穩固。康熙皇帝為了籠絡人心，開設「博學鴻儒科」，徵召前朝遺老出仕。",
@@ -279,7 +279,7 @@
             ]
         },
         "ch8": {
-            "bg": "images/bg_ch8.jpg",
+            "bg": "images/bg_ch8.png",
             "bgm": "audio/bgm_tense.mp3",
             "dialogues": [
                 "<b>【第八章：文字獄的陰霾】</b><br>雖然你小心翼翼，但文字獄的風暴還是刮起來了。有人舉報你的詩文中含有懷念前朝的「反詩」。",
@@ -301,7 +301,7 @@
             ]
         },
         "ch9": {
-            "bg": "images/bg_ch9.jpg",
+            "bg": "images/bg_ch9.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
                 "<b>【最終章：歷史的定論】</b><br>你也走到了生命的盡頭。兩世為人，歷經五代與明清兩次巨變。",
