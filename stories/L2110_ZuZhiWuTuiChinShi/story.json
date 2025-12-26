@@ -39,7 +39,8 @@
             "image": "images/bg_ch1.png",
             "priority": 40,
             "conditions": [
-                { "stat": "trust", "op": "<", "val": 50 }
+                { "stat": "trust", "op": "<", "val": 50 },
+                { "stat": "courage", "op": ">", "val": 10 }
             ]
         },
         {
@@ -50,7 +51,7 @@
             "image": "images/bg_ch2.png",
             "priority": 10,
             "conditions": [
-                { "stat": "courage", "op": "<", "val": 10 }
+                { "stat": "courage", "op": "<=", "val": 10 }
             ]
         }
     ],
