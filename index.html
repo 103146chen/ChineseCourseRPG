@@ -4,30 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPG Engine</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <audio id="bgm-player" loop></audio>
     <audio id="sfx-player"></audio>
 
     <div class="game-window">
         <div id="game-bg" class="background-layer"></div>
-
-        <div class="stats-overlay">
-            <div id="stats-container"></div>
-        </div>
-
+        <div class="stats-overlay"><div id="stats-container"></div></div>
         <div class="dialogue-container">
             <div id="story-text" class="dialogue-text">載入中...</div>
             <div id="next-indicator" class="next-arrow">▼ 點擊繼續</div>
         </div>
-
         <div id="choices-overlay" class="choices-layer hidden">
             <div id="choices-container" class="choices-box"></div>
         </div>
-
         <div id="ending-screen" class="ending-layer hidden">
             <h1 id="ending-title"></h1>
             <p id="ending-desc"></p>
@@ -36,6 +29,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="assets/js/script.js"></script> 
 </body>
 </html>
