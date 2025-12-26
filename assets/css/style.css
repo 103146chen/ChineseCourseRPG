@@ -256,6 +256,95 @@ body {
 
 .hidden { display: none !important; }
 
+/* === 回顧系統樣式 === */
+
+/* 按鈕群組 */
+.ending-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+/* 回顧容器 (彈出視窗) */
+.review-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    height: 80%;
+    background: #1a1a1a;
+    border: 2px solid var(--accent-color);
+    border-radius: 10px;
+    padding: 20px;
+    z-index: 200; /* 最高層 */
+    overflow-y: auto;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    color: #fff;
+    text-align: left; /* 內容靠左 */
+}
+
+.review-box h3 {
+    text-align: center;
+    color: var(--accent-color);
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* 回顧卡片 */
+.review-card {
+    background: #2a2a2a;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 5px solid #888;
+}
+
+/* 不同狀態的顏色 */
+.review-card.success { border-left-color: #2ecc71; } /* 綠色：符合 */
+.review-card.warning { border-left-color: #e74c3c; } /* 紅色：背離 */
+.review-card.info { border-left-color: #3498db; }    /* 藍色：中立 */
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.player-choice {
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #444;
+}
+
+.analysis-content {
+    font-size: 0.95rem;
+    color: #ddd;
+    line-height: 1.5;
+}
+
+.analysis-content strong {
+    color: var(--accent-color);
+}
+
+.close-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 30px;
+    background: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.close-btn:hover { background: #666; }
+
 /* =========================================
    RWD 手機版適配 (螢幕寬度小於 768px)
    ========================================= */

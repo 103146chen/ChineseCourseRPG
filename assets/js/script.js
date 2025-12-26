@@ -8,7 +8,8 @@ let gameState = {
     currentSceneId: '',     // 當前場景 ID
     currentDialogueIndex: 0,// 當前對話句數
     storyData: null,        // 載入的完整劇本資料
-    basePath: ''            // 故事資源的基礎路徑 (例如 "stories/story1/")
+    basePath: '',           // 故事資源的基礎路徑 (例如 "stories/story1/")
+    history: []             // 用來存玩家的選擇歷程
 };
 
 // 媒體控制器
@@ -187,7 +188,15 @@ function showChoices() {
 
 // 執行玩家選擇
 function makeChoice(choice) {
-    // 1. 應用數值變化 (effects)
+    // 1. 新增解析紀錄
+    if (choice.analysis) {
+        gameState.history.push({
+            sceneTitle: gameState.storyData.scenes[gameState.currentSceneId].dialogues[0], // 抓該場景第一句話當標題(通常包含章節名)
+            choiceText: choice.text,
+            analysis: choice.analysis
+        });
+    }
+    // 2. 應用數值變化 (effects)
     if (choice.effects) {
         for (const [key, value] of Object.entries(choice.effects)) {
             // 特殊邏輯：如果是切換世代 (ch5_)，通常代表數值重置，所以直接賦值 (=)
@@ -290,6 +299,40 @@ function showEndingScreen(endingData) {
     if (endingData.image) {
         document.getElementById('game-bg').style.backgroundImage = `url('${gameState.basePath}${endingData.image}')`;
     }
+}
+
+// 顯示回顧
+function showReview() {
+    const list = document.getElementById('review-list');
+    list.innerHTML = ''; // 清空
+
+    gameState.history.forEach((item, index) => {
+        const card = document.createElement('div');
+        // 根據 status 設定顏色樣式
+        card.className = `review-card ${item.analysis.status}`;
+
+        // 清理標題HTML標籤 (只保留純文字)
+        const cleanTitle = item.sceneTitle.replace(/<[^>]*>?/gm, '').substring(0, 15) + '...';
+
+        card.innerHTML = `
+            <div class="review-header">
+                <span class="step-num">抉擇 ${index + 1}</span>
+                <span class="scene-name">${cleanTitle}</span>
+            </div>
+            <div class="player-choice">你選擇了：${item.choiceText}</div>
+            <div class="analysis-content">
+                <strong>${item.analysis.title}</strong><br>
+                ${item.analysis.content}
+            </div>
+        `;
+        list.appendChild(card);
+    });
+
+    document.getElementById('review-container').classList.remove('hidden');
+}
+
+function closeReview() {
+    document.getElementById('review-container').classList.add('hidden');
 }
 
 // 音樂播放輔助函式

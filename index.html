@@ -22,10 +22,22 @@
             <div id="choices-container" class="choices-box"></div>
         </div>
         <div id="ending-screen" class="ending-layer hidden">
-            <h1 id="ending-title"></h1>
-            <p id="ending-desc"></p>
-            <p id="ending-quote" class="quote"></p>
-            <button class="choice-btn restart-btn" onclick="location.reload()">重新輪迴</button>
+            <div class="ending-content-wrapper">
+                <h1 id="ending-title"></h1>
+                <p id="ending-desc"></p>
+                <p id="ending-quote" class="quote"></p>
+                
+                <div class="ending-actions">
+                    <button class="choice-btn" onclick="showReview()">📜 查看我的抉擇分析</button>
+                    <button class="choice-btn restart-btn" onclick="location.reload()">🔄 重新輪迴</button>
+                </div>
+
+                <div id="review-container" class="review-box hidden">
+                    <h3>【 學習歷程回顧 】</h3>
+                    <div id="review-list"></div>
+                    <button class="close-btn" onclick="closeReview()">關閉</button>
+                </div>
+            </div>
         </div>
     </div>
 
