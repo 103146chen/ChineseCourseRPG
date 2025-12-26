@@ -1,172 +1,266 @@
 let gameState = {
-    stats: { integrity: 50, power: 30, family: 100 },
-    currentSceneId: 'intro',
+    stats: {},
+    currentSceneId: '',
     currentDialogueIndex: 0,
-    storyData: null,
-    isSecondLife: false // 標記是否進入下半部
+    storyData: null
 };
 
+// 媒體控制器
+const bgmPlayer = document.getElementById('bgm-player');
+const sfxPlayer = document.getElementById('sfx-player');
+
+// 初始化
 async function initGame() {
     try {
         const response = await fetch('story.json');
+        if (!response.ok) throw new Error("找不到 story.json");
         gameState.storyData = await response.json();
-        gameState.stats = { ...gameState.storyData.initialStats };
+        
+        // 1. 設定標題
+        if(gameState.storyData.config.title) {
+            document.title = gameState.storyData.config.title;
+        }
+
+        // 2. 初始化數值 UI
+        initStatsUI(gameState.storyData.config.stats);
+        
+        // 3. 設定初始數值
+        gameState.storyData.config.stats.forEach(stat => {
+            gameState.stats[stat.id] = stat.init;
+        });
         updateStatsUI();
+
+        // 4. 載入序章
         loadScene('intro');
+
     } catch (error) {
         console.error(error);
-        document.getElementById('story-text').innerText = "載入失敗，請檢查 story.json";
+        document.getElementById('story-text').innerHTML = "⚠️ 遊戲載入失敗。<br>請確認 story.json 是否存在且格式正確。";
     }
 }
 
+// 動態建立數值條
+function initStatsUI(statsConfig) {
+    const container = document.getElementById('stats-container');
+    container.innerHTML = '';
+    statsConfig.forEach(stat => {
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        row.innerHTML = `
+            <span class="label">${stat.name}</span>
+            <div class="bar-bg">
+                <div id="bar-${stat.id}" class="bar-fill" style="width: ${stat.init}%; background-color: ${stat.color};"></div>
+            </div>
+            <span id="val-${stat.id}" class="val-text">${stat.init}</span>
+        `;
+        container.appendChild(row);
+    });
+}
+
+// 載入場景
 function loadScene(sceneId) {
-    if (sceneId === 'end_calc') { calculateFinalEnding(); return; }
-    
-    // 特殊跳轉邏輯：第五章結束後，決定下半部的出身
-    if (sceneId === 'ch5_start') {
-        determineLineage();
+    // 檢查是否為結算指令
+    if (sceneId === 'end_calc') {
+        evaluateEnding();
+        return;
+    }
+
+    const scene = gameState.storyData.scenes[sceneId];
+    if (!scene) {
+        console.error(`找不到場景 ID: ${sceneId}`);
         return;
     }
 
     gameState.currentSceneId = sceneId;
     gameState.currentDialogueIndex = 0;
-    
-    // UI 重置
-    document.getElementById('choices-container').classList.add('hidden');
-    document.getElementById('next-btn').classList.remove('hidden');
-    document.getElementById('next-btn').style.display = 'block';
+
+    // 設定背景與音樂
+    const bgDiv = document.getElementById('game-bg');
+    if (scene.bg) bgDiv.style.backgroundImage = `url('${scene.bg}')`;
+    if (scene.bgm) playBGM(scene.bgm);
+
+    // UI 狀態重置
+    document.getElementById('choices-overlay').classList.add('hidden');
+    document.getElementById('next-indicator').classList.remove('hidden');
+    document.querySelector('.dialogue-container').classList.remove('hidden');
 
     displayNextDialogue();
 }
 
-// 決定下半部出身的邏輯
-function determineLineage() {
-    gameState.isSecondLife = true;
-    
-    // 根據上半部的廉恥值決定下半部路線
-    if (gameState.stats.integrity < 40) {
-        // 走富貴無恥路線
-        loadScene('ch5_rich');
-        // 繼承獎勵與懲罰：有錢但無名聲
-        gameState.stats.power = 80;
-        gameState.stats.family = 100;
-        gameState.stats.integrity = 20; 
-        showNotification("【世代繼承】先祖選擇了富貴，你出生在豪門，但背負罵名。");
-    } else {
-        // 走清貧氣節路線
-        loadScene('ch5_poor');
-        // 繼承獎勵與懲罰：有名聲但貧窮
-        gameState.stats.power = 20;
-        gameState.stats.family = 60; // 家族勢力較弱
-        gameState.stats.integrity = 80;
-        showNotification("【世代繼承】先祖堅持氣節，你家道中落，但受人敬重。");
-    }
-    updateStatsUI();
-}
-
-function showNotification(msg) {
-    // 簡單的通知效果，可以做得更華麗
-    alert(msg); 
-}
-
+// 顯示下一句對話
 function displayNextDialogue() {
     const scene = gameState.storyData.scenes[gameState.currentSceneId];
     const storyBox = document.getElementById('story-text');
     
-    // 處理圖片顯示 (如果需要)
-    // 這裡我們簡單用文字
-    const text = scene.dialogues[gameState.currentDialogueIndex];
-    storyBox.innerHTML = text;
+    // 顯示文字
+    storyBox.innerHTML = scene.dialogues[gameState.currentDialogueIndex];
     storyBox.style.opacity = 0;
-    setTimeout(() => storyBox.style.opacity = 1, 100);
+    setTimeout(() => storyBox.style.opacity = 1, 50); // 淡入效果
 
     gameState.currentDialogueIndex++;
 
+    const nextBtn = document.getElementById('next-indicator');
+    
+    // 判斷是否還有下一句
     if (gameState.currentDialogueIndex >= scene.dialogues.length) {
-        const nextBtn = document.getElementById('next-btn');
-        nextBtn.innerText = "做出抉擇";
+        nextBtn.innerText = "做出抉擇...";
         nextBtn.onclick = showChoices;
     } else {
-        const nextBtn = document.getElementById('next-btn');
-        nextBtn.innerText = "▼ 繼續劇情";
+        nextBtn.innerText = "▼ 點擊繼續";
         nextBtn.onclick = nextDialogue;
     }
 }
 
 function nextDialogue() {
+    playSFX('assets/audio/sfx_click.mp3');
     displayNextDialogue();
 }
 
+// 顯示選項 (包含條件檢查 logic)
 function showChoices() {
-    document.getElementById('next-btn').style.display = 'none';
-    const choicesContainer = document.getElementById('choices-container');
-    choicesContainer.innerHTML = '';
-    choicesContainer.classList.remove('hidden');
+    const overlay = document.getElementById('choices-overlay');
+    const container = document.getElementById('choices-container');
+    container.innerHTML = '';
+    overlay.classList.remove('hidden');
 
     const scene = gameState.storyData.scenes[gameState.currentSceneId];
+    
     scene.choices.forEach(choice => {
+        // **關鍵功能：檢查選項是否符合條件 (Requirement)**
+        if (choice.req) {
+            const currentVal = gameState.stats[choice.req.stat];
+            const targetVal = choice.req.val;
+            let met = false;
+            switch(choice.req.op) {
+                case '>': met = currentVal > targetVal; break;
+                case '>=': met = currentVal >= targetVal; break;
+                case '<': met = currentVal < targetVal; break;
+                case '<=': met = currentVal <= targetVal; break;
+                case '==': met = currentVal == targetVal; break;
+            }
+            // 如果條件不符，就不產生這個按鈕 (隱藏選項)
+            if (!met) return;
+        }
+
+        // 產生按鈕
         const btn = document.createElement('button');
         btn.innerHTML = choice.text;
         btn.className = 'choice-btn';
-        btn.onclick = () => makeChoice(choice);
-        choicesContainer.appendChild(btn);
+        btn.onclick = () => {
+            playSFX('assets/audio/sfx_click.mp3');
+            makeChoice(choice);
+        };
+        container.appendChild(btn);
     });
 }
 
+// 執行選擇結果
 function makeChoice(choice) {
-    const effects = choice.effects;
-    gameState.stats.integrity += effects.integrity;
-    gameState.stats.power += effects.power;
-    gameState.stats.family += effects.family;
-    
-    // 檢查是否中途死亡 (家族歸零)
-    if (gameState.stats.family <= 0) {
-        showEnding('tragedy');
-        return;
+    // 1. 應用數值變化 (若 effects 存在)
+    if (choice.effects) {
+        for (const [key, value] of Object.entries(choice.effects)) {
+            // 如果是 "=" 開頭，代表直接設定數值 (例如繼承身世時)
+            // 為了簡化，這裡假設 effects 裡的數字都是增減值，若要直接設定可以把邏輯寫複雜點
+            // 這裡我做一個特殊判斷：如果新的場景是 ch5_rich 或 ch5_poor，代表是重置數值
+            if (choice.nextScene.includes('ch5_')) {
+                 gameState.stats[key] = value; // 直接設定
+            } else {
+                 gameState.stats[key] += value; // 累加
+            }
+        }
     }
-
     updateStatsUI();
-    loadScene(choice.nextScene);
+
+    // 2. 檢查是否有強制觸發的結局 (例如死亡) - Priority >= 100
+    const forcedEnding = checkEndingConditions(100);
+    if (forcedEnding) {
+        showEndingScreen(forcedEnding);
+    } else {
+        loadScene(choice.nextScene);
+    }
 }
 
+// 更新畫面上的數值條
 function updateStatsUI() {
-    updateBar('integrity', gameState.stats.integrity);
-    updateBar('power', gameState.stats.power);
-    updateBar('family', gameState.stats.family);
+    for (const [key, value] of Object.entries(gameState.stats)) {
+        // 限制 0-100
+        const clampedVal = Math.max(0, Math.min(100, value));
+        const bar = document.getElementById(`bar-${key}`);
+        const text = document.getElementById(`val-${key}`);
+        if (bar) bar.style.width = `${clampedVal}%`;
+        if (text) text.innerText = value;
+    }
 }
 
-function updateBar(type, value) {
-    let val = Math.max(0, Math.min(100, value));
-    document.getElementById(`bar-${type}`).style.width = `${val}%`;
+// 評估結局 (檢查所有結局條件)
+function evaluateEnding() {
+    const result = checkEndingConditions(-1); // -1 代表檢查所有優先級
+    if (result) {
+        showEndingScreen(result);
+    } else {
+        alert("找不到符合條件的結局，請檢查 story.json 設定。");
+    }
 }
 
-function calculateFinalEnding() {
-    const s = gameState.stats;
-    // 結局判定邏輯更嚴格
-    if (s.power > 80 && s.integrity < 30) showEnding('corrupt');
-    else if (s.integrity > 90) showEnding('saint'); // 聖人結局
-    else if (s.integrity > 60 && s.power < 50) showEnding('noble');
-    else showEnding('average');
+// 檢查結局條件的核心邏輯
+function checkEndingConditions(minPriority = -1) {
+    // 依照 priority 從大到小排序
+    const sortedEndings = [...gameState.storyData.endings].sort((a, b) => b.priority - a.priority);
+
+    for (const ending of sortedEndings) {
+        if (ending.priority < minPriority) continue;
+        if (!ending.conditions || ending.conditions.length === 0) return ending; // 無條件結局 (預設)
+
+        let allMet = true;
+        for (const cond of ending.conditions) {
+            const currentVal = gameState.stats[cond.stat];
+            switch (cond.op) {
+                case '>': if (!(currentVal > cond.val)) allMet = false; break;
+                case '>=': if (!(currentVal >= cond.val)) allMet = false; break;
+                case '<': if (!(currentVal < cond.val)) allMet = false; break;
+                case '<=': if (!(currentVal <= cond.val)) allMet = false; break;
+                case '==': if (!(currentVal == cond.val)) allMet = false; break;
+            }
+            if (!allMet) break;
+        }
+        if (allMet) return ending;
+    }
+    return null;
 }
 
-function showEnding(type) {
-    document.querySelector('main').style.display = 'none';
-    document.getElementById('stats-bar').style.display = 'none';
+// 顯示結局畫面
+function showEndingScreen(endingData) {
+    document.querySelector('.game-window').classList.add('ending-mode');
+    document.getElementById('choices-overlay').classList.add('hidden');
+    document.querySelector('.dialogue-container').classList.add('hidden');
+    document.querySelector('.stats-overlay').classList.add('hidden');
+
     const screen = document.getElementById('ending-screen');
     screen.classList.remove('hidden');
 
-    const data = {
-        'saint': { title: "【完美結局：萬世師表】", desc: "你的一生是所有讀書人的典範。你的《日知錄》流傳千古，顧炎武引你為知己。", quote: "「博學於文，行己有恥。」" },
-        'corrupt': { title: "【結局：長樂老再世】", desc: "你兩世為人，都選擇了利益。你的家族或許富可敵國，但在史書上，你永遠是那個反面教材。", quote: "「士大夫之無恥，是謂國恥。」" },
-        'noble': { title: "【結局：亂世松柏】", desc: "雖然一生清貧，屢遭磨難，但你守住了讀書人的底線。後世提及那個黑暗的時代，都會想起你。", quote: "「彼眾昏之日，固未嘗無獨醒之人也。」" },
-        'tragedy': { title: "【結局：歷史的塵埃】", desc: "亂世太過殘酷，你的家族在動盪中徹底消亡。這是一個令人心碎的悲劇。", quote: "「覆巢之下，安有完卵？」" },
-        'average': { title: "【結局：隨波逐流】", desc: "你在夾縫中生存了下來。沒有大惡，也無大善。你是歷史長河中沈默的大多數。", quote: "「無恥之恥，無恥矣。」" }
-    };
+    document.getElementById('ending-title').innerText = endingData.title;
+    document.getElementById('ending-desc').innerText = endingData.desc;
+    document.getElementById('ending-quote').innerText = endingData.quote || "";
     
-    const end = data[type] || data['average'];
-    document.getElementById('ending-title').innerText = end.title;
-    document.getElementById('ending-desc').innerText = end.desc;
-    document.getElementById('ending-quote').innerText = end.quote;
+    if (endingData.image) {
+        document.getElementById('game-bg').style.backgroundImage = `url('${endingData.image}')`;
+    }
+}
+
+// 音樂播放 helper
+function playBGM(src) {
+    if (!src) return;
+    if (!bgmPlayer.src.includes(src)) {
+        bgmPlayer.src = src;
+        bgmPlayer.volume = 0.5;
+        bgmPlayer.play().catch(() => console.log("等待互動以播放音樂"));
+    }
+}
+
+function playSFX(src) {
+    if (!src) return;
+    sfxPlayer.src = src;
+    sfxPlayer.play().catch(() => {});
 }
 
 window.onload = initGame;
