@@ -1,58 +1,78 @@
-// 遊戲狀態全域變數
 let gameState = {
-    stats: {
-        integrity: 50, // 廉恥
-        power: 30,     // 權勢
-        family: 100    // 家族
-    },
-    currentScene: 'intro',
+    stats: { integrity: 50, power: 30, family: 100 },
+    currentSceneId: 'intro',
+    currentDialogueIndex: 0,
     storyData: null
 };
 
-// 初始化：載入 JSON 檔案
 async function initGame() {
     try {
         const response = await fetch('story.json');
-        if (!response.ok) throw new Error("無法讀取 story.json");
         gameState.storyData = await response.json();
-        
-        // 設定初始數值
         gameState.stats = { ...gameState.storyData.initialStats };
         updateStatsUI();
         loadScene('intro');
-        
     } catch (error) {
         console.error(error);
-        document.getElementById('story-text').innerHTML = 
-            "⚠️ 讀取遊戲數據失敗。<br>請確保您是使用 Local Server (如 VS Code Live Server) 開啟此網頁，而非直接雙擊 html 檔案。";
+        document.getElementById('story-text').innerText = "載入失敗，請檢查 story.json";
     }
 }
 
-// 載入場景
 function loadScene(sceneId) {
-    // 特殊結局判斷：如果直接跳轉到特殊結局 ID
-    if (sceneId === 'end_martyr') {
-        showEnding('martyr');
-        return;
-    }
-    if (sceneId === 'calc_ending') {
-        calculateFinalEnding();
-        return;
-    }
+    if (sceneId === 'end_martyr') { showEnding('martyr'); return; }
+    if (sceneId === 'end_calc') { calculateFinalEnding(); return; }
 
-    const scene = gameState.storyData.scenes[sceneId];
-    if (!scene) return;
+    gameState.currentSceneId = sceneId;
+    gameState.currentDialogueIndex = 0; // 重置對話進度
+    
+    // 隱藏選項，顯示繼續按鈕
+    document.getElementById('choices-container').classList.add('hidden');
+    document.getElementById('next-btn').classList.remove('hidden');
+    document.getElementById('next-btn').style.display = 'block';
 
-    // 更新文字
+    displayNextDialogue();
+}
+
+function displayNextDialogue() {
+    const scene = gameState.storyData.scenes[gameState.currentSceneId];
     const storyBox = document.getElementById('story-text');
-    storyBox.innerHTML = scene.text;
+    
+    // 取得目前這句話
+    const text = scene.dialogues[gameState.currentDialogueIndex];
+    
+    // 簡單的打字機效果或直接顯示
+    storyBox.innerHTML = text;
     storyBox.style.opacity = 0;
-    setTimeout(() => storyBox.style.opacity = 1, 100); // 簡單淡入效果
+    setTimeout(() => storyBox.style.opacity = 1, 100);
 
-    // 生成選項按鈕
+    gameState.currentDialogueIndex++;
+
+    // 檢查是否還有下一句
+    if (gameState.currentDialogueIndex >= scene.dialogues.length) {
+        // 沒有下一句了，隱藏繼續按鈕，顯示選項
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.innerText = "做出抉擇"; // 提示文字變化
+        nextBtn.onclick = showChoices; // 改變按鈕行為
+    } else {
+        // 還有下一句
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.innerText = "▼ 繼續劇情";
+        nextBtn.onclick = nextDialogue;
+    }
+}
+
+// 這是綁定在按鈕上的函式
+function nextDialogue() {
+    displayNextDialogue();
+}
+
+function showChoices() {
+    document.getElementById('next-btn').style.display = 'none'; // 隱藏繼續按鈕
     const choicesContainer = document.getElementById('choices-container');
-    choicesContainer.innerHTML = ''; // 清空舊選項
+    choicesContainer.innerHTML = '';
+    choicesContainer.classList.remove('hidden');
 
+    const scene = gameState.storyData.scenes[gameState.currentSceneId];
     scene.choices.forEach(choice => {
         const btn = document.createElement('button');
         btn.innerHTML = choice.text;
@@ -62,29 +82,15 @@ function loadScene(sceneId) {
     });
 }
 
-// 處理玩家選擇
 function makeChoice(choice) {
-    // 1. 更新數值
     const effects = choice.effects;
     gameState.stats.integrity += effects.integrity;
     gameState.stats.power += effects.power;
     gameState.stats.family += effects.family;
-
-    // 2. 邊界檢查 (數值不能超過 0-100，或根據需求調整)
-    // 這裡我們允許破表，但在 UI 上限制顯示
     updateStatsUI();
-
-    // 3. 檢查是否因為數值過低導致遊戲提前結束 (例如家族全滅)
-    if (gameState.stats.family <= 0 && choice.nextScene !== 'end_martyr') {
-        showEnding('tragedy_family');
-        return;
-    }
-
-    // 4. 前往下一章
     loadScene(choice.nextScene);
 }
 
-// 更新 UI 數值條
 function updateStatsUI() {
     updateBar('integrity', gameState.stats.integrity);
     updateBar('power', gameState.stats.power);
@@ -92,78 +98,36 @@ function updateStatsUI() {
 }
 
 function updateBar(type, value) {
-    // 限制顯示範圍 0-100
-    let displayValue = Math.max(0, Math.min(100, value));
-    document.getElementById(`bar-${type}`).style.width = `${displayValue}%`;
-    document.getElementById(`val-${type}`).innerText = value;
-    
-    // 顏色變化邏輯 (可選)
-    const bar = document.getElementById(`bar-${type}`);
-    if (value < 30) bar.style.backgroundColor = '#d9534f'; // 紅色警示
-    else bar.style.backgroundColor = '#8b0000'; // 正常深紅
+    let val = Math.max(0, Math.min(100, value));
+    document.getElementById(`bar-${type}`).style.width = `${val}%`;
 }
 
-// 計算最終結局
 function calculateFinalEnding() {
     const s = gameState.stats;
-    
-    if (s.power > 80 && s.integrity < 20) {
-        showEnding('corrupt'); // 長樂老結局
-    } else if (s.integrity > 80 && s.power < 40) {
-        showEnding('noble'); // 松柏後凋結局
-    } else {
-        showEnding('average'); // 凡人結局
-    }
+    if (s.power > 80 && s.integrity < 30) showEnding('corrupt');
+    else if (s.integrity > 70 && s.power < 40) showEnding('noble');
+    else if (s.family <= 0) showEnding('tragedy');
+    else showEnding('average');
 }
 
-// 顯示結局畫面
 function showEnding(type) {
-    // 隱藏遊戲主介面
     document.querySelector('main').style.display = 'none';
     document.getElementById('stats-bar').style.display = 'none';
-    
-    const endingScreen = document.getElementById('ending-screen');
-    endingScreen.classList.remove('hidden');
-    
-    const title = document.getElementById('ending-title');
-    const desc = document.getElementById('ending-desc');
-    const quote = document.getElementById('ending-quote');
+    const screen = document.getElementById('ending-screen');
+    screen.classList.remove('hidden');
 
-    // 結局內容定義
-    const endings = {
-        'martyr': {
-            title: "結局：捨生取義",
-            desc: "你選擇了最慘烈但也最壯烈的方式。你的家人或許因此受難，但你的名字被刻在歷史的豐碑上。",
-            quote: "「孔曰成仁，孟曰取義；惟其義盡，所以仁至。」"
-        },
-        'tragedy_family': {
-            title: "結局：家破人亡",
-            desc: "在亂世中，你既沒能保住氣節，也沒能保住家人。這是一個徹頭徹尾的悲劇。",
-            quote: "「覆巢之下，安有完卵？」"
-        },
-        'corrupt': {
-            title: "結局：長樂老再世",
-            desc: "你一生榮華富貴，歷經多朝而不倒。然而，史書將你列入《貳臣傳》，你的名字成為無恥的代名詞。",
-            quote: "「士大夫之無恥，是謂國恥。」"
-        },
-        'noble': {
-            title: "結局：亂世松柏",
-            desc: "你一生清貧，屢遭磨難，但你守住了讀書人的底線。後世提及那個黑暗的時代，都會想起你這盞明燈。",
-            quote: "「彼眾昏之日，固未嘗無獨醒之人也。」"
-        },
-        'average': {
-            title: "結局：隨波逐流",
-            desc: "你像大多數人一樣，在夾縫中求生存。沒有大惡，也無大善。歷史不會記住你，但你平安地活過了亂世。",
-            quote: "「無恥之恥，無恥矣。」"
-        }
+    const data = {
+        'martyr': { title: "【結局：捨生取義】", desc: "你死了，但你的血喚醒了無數人。歷史將永遠記住你的氣節。", quote: "孔曰成仁，孟曰取義。" },
+        'corrupt': { title: "【結局：長樂老】", desc: "你一生榮華，子孫滿堂。但死後，你的名字被寫進了奸臣傳。", quote: "士大夫之無恥，是謂國恥。" },
+        'noble': { title: "【結局：亂世松柏】", desc: "雖然一生清貧，但你守住了底線。你是黑暗時代的一盞明燈。", quote: "松柏後凋於歲寒。" },
+        'tragedy': { title: "【結局：家破人亡】", desc: "亂世無情，你失去了一切。這是一個令人心碎的悲劇。", quote: "天地不仁，以萬物為芻狗。" },
+        'average': { title: "【結局：隨波逐流】", desc: "你在夾縫中生存了下來，或許心中有愧，或許慶幸活著。", quote: "無恥之恥，無恥矣。" }
     };
-
-    const result = endings[type] || endings['average'];
     
-    title.innerText = result.title;
-    desc.innerText = result.desc;
-    quote.innerText = result.quote;
+    const end = data[type] || data['average'];
+    document.getElementById('ending-title').innerText = end.title;
+    document.getElementById('ending-desc').innerText = end.desc;
+    document.getElementById('ending-quote').innerText = end.quote;
 }
 
-// 啟動遊戲
 window.onload = initGame;

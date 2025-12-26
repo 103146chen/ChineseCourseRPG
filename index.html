@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>士大夫的抉擇：廉恥之路</title>
+    <title>士大夫的抉擇：廉恥之路 (完整版)</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -12,42 +12,42 @@
     <div class="game-container">
         <header>
             <h1>士大夫的抉擇</h1>
-            <p class="subtitle">—— 廉恥 · 權勢 · 生存 ——</p>
+            <p class="subtitle">—— 行己有恥 · 萬世流芳 ——</p>
         </header>
 
         <div id="stats-bar">
             <div class="stat-item">
                 <span class="stat-label">廉恥 (氣節)</span>
                 <div class="progress-bg"><div id="bar-integrity" class="progress-fill" style="width: 50%;"></div></div>
-                <span id="val-integrity">50</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">權勢 (官運)</span>
-                <div class="progress-bg"><div id="bar-power" class="progress-fill" style="width: 50%;"></div></div>
-                <span id="val-power">50</span>
+                <div class="progress-bg"><div id="bar-power" class="progress-fill" style="width: 30%;"></div></div>
             </div>
             <div class="stat-item">
                 <span class="stat-label">家族存活</span>
                 <div class="progress-bg"><div id="bar-family" class="progress-fill" style="width: 100%;"></div></div>
-                <span id="val-family">100</span>
             </div>
         </div>
 
         <main>
-            <div id="scene-image" class="scene-img"></div>
-            <div id="story-text" class="story-box">
-                正在載入劇本...
+            <div id="story-box" class="story-box">
+                <p id="story-text">正在載入亂世...</p>
             </div>
             
-            <div id="choices-container" class="choices-box">
-                </div>
+            <div id="interaction-area">
+                <button id="next-btn" class="next-btn" onclick="nextDialogue()">▼ 繼續劇情</button>
+                <div id="choices-container" class="choices-box hidden"></div>
+            </div>
         </main>
 
         <div id="ending-screen" class="hidden">
             <h2 id="ending-title"></h2>
-            <p id="ending-desc"></p>
-            <p id="ending-quote" class="quote"></p>
-            <button onclick="location.reload()">重新體驗亂世</button>
+            <div class="ending-content">
+                <p id="ending-desc"></p>
+                <p id="ending-quote" class="quote"></p>
+            </div>
+            <button class="restart-btn" onclick="location.reload()">重新體驗亂世</button>
         </div>
     </div>
 
