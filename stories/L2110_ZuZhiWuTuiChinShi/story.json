@@ -1,6 +1,6 @@
 {
     "config": {
-        "title": "燭之武退秦師：危城舌戰 (完整修復版)",
+        "title": "燭之武退秦師：危城舌戰 (沉浸版)",
         "stats": [
             { "id": "trust", "name": "秦伯好感", "init": 10, "color": "#eebb44" },
             { "id": "courage", "name": "膽識", "init": 20, "color": "#cc4444" },
@@ -106,12 +106,12 @@
             ],
             "choices": [
                 {
-                    "text": "抱怨推辭：「臣之壯也，猶不如人；今老矣，無能為也已。」",
+                    "text": "「臣之壯也，猶不如人；今老矣，無能為也已。」",
                     "effects": { "wisdom": 5 },
                     "nextScene": "scene_apology"
                 },
                 {
-                    "text": "斷然拒絕：「早知今日何必當初？我不去！」",
+                    "text": "「早知今日何必當初？我不去！」",
                     "effects": { "courage": -10 },
                     "nextScene": "scene_refuse_reaction"
                 }
@@ -128,12 +128,12 @@
             ],
             "choices": [
                 {
-                    "text": "心軟回頭（回到談判）",
+                    "text": "心軟回頭",
                     "effects": { "courage": 5 },
                     "nextScene": "scene_apology"
                 },
                 {
-                    "text": "狠心離開（觸發失敗結局）",
+                    "text": "狠心離開",
                     "effects": { "courage": -100 },
                     "nextScene": "scene_coward_fail"
                 }
@@ -255,17 +255,17 @@
             ],
             "choices": [
                 {
-                    "text": "以退為進（文本）：「秦、晉圍鄭，鄭既知亡矣。」",
+                    "text": "「秦、晉圍鄭，鄭既知亡矣。」",
                     "effects": { "wisdom": 10, "trust": 20 },
                     "nextScene": "reaction_good_start"
                 },
                 {
-                    "text": "質問（激進）：「秦國為何要幫助晉國作惡？」",
+                    "text": "「秦國為何要幫助晉國作惡？」",
                     "effects": { "trust": -20, "courage": 10 },
                     "nextScene": "reaction_bad_start"
                 },
                 {
-                    "text": "乞求（懦弱）：「求大王開恩，放過我們吧！」",
+                    "text": "「求大王開恩，放過我們吧！」",
                     "effects": { "trust": -20, "wisdom": -10 },
                     "nextScene": "reaction_weak_start"
                 }
@@ -354,12 +354,12 @@
             ],
             "choices": [
                 {
-                    "text": "點破弊端（文本）：「焉用亡鄭以陪鄰？鄰之厚，君之薄也。」",
+                    "text": "「焉用亡鄭以陪鄰？鄰之厚，君之薄也。」",
                     "effects": { "wisdom": 15, "trust": 15 },
                     "nextScene": "reaction_geo_success"
                 },
                 {
-                    "text": "胡亂分析：「鄭國土地貧瘠，你要了也沒用。」",
+                    "text": "「鄭國土地貧瘠，你要了也沒用。」",
                     "effects": { "wisdom": -10, "trust": -5 },
                     "nextScene": "reaction_geo_fail"
                 }
@@ -408,12 +408,12 @@
             ],
             "choices": [
                 {
-                    "text": "東道主（文本）：「行李之往來，共其乏困。」",
+                    "text": "「行李之往來，共其乏困。」",
                     "effects": { "wisdom": 15, "trust": 15 },
                     "nextScene": "reaction_benefit_success"
                 },
                 {
-                    "text": "割地賠款：「我們願意把鄭國的一半土地給你。」",
+                    "text": "「我們願意把鄭國的一半土地給你。」",
                     "effects": { "wisdom": -10, "trust": -10 },
                     "nextScene": "reaction_benefit_fail"
                 }
@@ -462,12 +462,12 @@
             ],
             "choices": [
                 {
-                    "text": "具體事實（文本）：「朝濟而夕設版焉，君之所知也。」",
+                    "text": "「朝濟而夕設版焉，君之所知也。」",
                     "effects": { "wisdom": 15, "trust": 15 },
                     "nextScene": "reaction_trust_success"
                 },
                 {
-                    "text": "單純謾罵：「晉國人都是騙子！壞蛋！」",
+                    "text": "「晉國人都是騙子！壞蛋！」",
                     "effects": { "trust": -5 },
                     "nextScene": "reaction_trust_weak"
                 }
@@ -517,12 +517,12 @@
             ],
             "choices": [
                 {
-                    "text": "直指要害（文本）：「若不闕秦，將焉取之？唯君圖之！」",
+                    "text": "「若不闕秦，將焉取之？唯君圖之！」",
                     "effects": { "wisdom": 20, "trust": 20 },
                     "nextScene": "reaction_threat_success"
                 },
                 {
-                    "text": "跪地痛哭：「大王救命啊！我不想死！」",
+                    "text": "「大王救命啊！我不想死！」",
                     "effects": { "trust": -10 },
                     "nextScene": "reaction_threat_fail"
                 }
