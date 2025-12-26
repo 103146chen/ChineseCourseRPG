@@ -1,0 +1,129 @@
+:root {
+    --bg-color: #f4f0e6; /* 米色宣紙底 */
+    --text-color: #2c2c2c; /* 墨色 */
+    --accent-color: #8b0000; /* 朱砂紅 */
+    --box-bg: #fffbf0;
+    --border-color: #5d4037;
+}
+
+body {
+    font-family: 'Noto Serif TC', serif; /* 宋體/明體 */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png'); /* 增加紙張紋理 */
+}
+
+.game-container {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    background: var(--box-bg);
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border-left: 10px solid var(--border-color); /* 仿古書裝訂線 */
+    margin: 20px auto;
+}
+
+header {
+    text-align: center;
+    border-bottom: 2px solid var(--text-color);
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 5px;
+    letter-spacing: 5px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1em;
+    margin-top: 0;
+}
+
+/* 數值條樣式 */
+#stats-bar {
+    display: flex;
+    justify-content: space-around;
+    background: #e0d8c8;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    width: 30%;
+}
+
+.progress-bg {
+    background: #ccc;
+    height: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: var(--accent-color);
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+/* 故事與選項 */
+.story-box {
+    font-size: 1.2em;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    min-height: 150px;
+}
+
+.choices-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+button {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    padding: 15px;
+    font-size: 1.1em;
+    font-family: 'Noto Serif TC', serif;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+button:hover {
+    background: var(--border-color);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+/* 結局畫面 */
+.hidden {
+    display: none;
+}
+
+#ending-screen {
+    text-align: center;
+    padding: 40px;
+    border: 3px double var(--accent-color);
+    margin-top: 20px;
+}
+
+.quote {
+    font-style: italic;
+    color: var(--accent-color);
+    margin: 20px 0;
+    font-weight: bold;
+}

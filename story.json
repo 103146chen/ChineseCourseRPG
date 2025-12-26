@@ -1,0 +1,94 @@
+{
+    "initialStats": {
+        "integrity": 50,
+        "power": 30,
+        "family": 100
+    },
+    "scenes": {
+        "intro": {
+            "text": "【序章：立志】<br>你是一名剛考上秀才的青年。亂世將至，父親問你：「管子說國有四維，如果世道大亂，只能守住最後一樣，你覺得是什麼？」",
+            "choices": [
+                {
+                    "text": "A. 禮義：治國需要法律與規矩。",
+                    "effects": { "power": 5, "integrity": 0, "family": 0 },
+                    "nextScene": "ch1"
+                },
+                {
+                    "text": "B. 廉恥：人若無恥，則無所不為。",
+                    "effects": { "power": 0, "integrity": 10, "family": 0 },
+                    "nextScene": "ch1"
+                }
+            ]
+        },
+        "ch1": {
+            "text": "【第一章：染缸的誘惑】<br>數年後，你在官場底層。同僚邀請你學習鮮卑語和彈琵琶，說這是討好王爺、升官發財的捷徑。你要學嗎？",
+            "choices": [
+                {
+                    "text": "A. 欣然接受：為了家計，學個才藝算什麼？",
+                    "effects": { "power": 20, "integrity": -15, "family": 10 },
+                    "nextScene": "ch2"
+                },
+                {
+                    "text": "B. 婉言拒絕：身為官員應務正業，不願媚俗。",
+                    "effects": { "power": -5, "integrity": 15, "family": -5 },
+                    "nextScene": "ch2"
+                },
+                {
+                    "text": "C. 憤怒斥責：這是丟盡讀書人的臉！",
+                    "effects": { "power": -20, "integrity": 30, "family": -10 },
+                    "nextScene": "ch2"
+                }
+            ]
+        },
+        "ch2": {
+            "text": "【第二章：中年的妥協】<br>你的上司貪污被調查，他塞給你一箱黃金作為封口費，並暗示如果你不收，你在京城的家人會有危險。",
+            "choices": [
+                {
+                    "text": "A. 收下黃金：為了孩子的未來與安全。",
+                    "effects": { "power": 30, "integrity": -30, "family": 20 },
+                    "nextScene": "ch3"
+                },
+                {
+                    "text": "B. 拒絕但沈默：不收錢，但也不揭發。",
+                    "effects": { "power": 0, "integrity": -5, "family": 0 },
+                    "nextScene": "ch3"
+                },
+                {
+                    "text": "C. 蒐集證據彈劾：君子愛財取之有道！",
+                    "effects": { "power": -30, "integrity": 40, "family": -20 },
+                    "nextScene": "ch3"
+                }
+            ]
+        },
+        "ch3": {
+            "text": "【第三章：改朝換代】<br>敵軍攻破京城。新皇帝派將軍拿著刀和官印來到你家。要麼當新朝宰相，要麼全家受難。",
+            "choices": [
+                {
+                    "text": "A. 效法馮道：配合新朝，自號長樂老。",
+                    "effects": { "power": 50, "integrity": -100, "family": 50 },
+                    "nextScene": "ch4"
+                },
+                {
+                    "text": "B. 稱病隱居：不仕二主，回鄉種田。",
+                    "effects": { "power": -50, "integrity": 20, "family": -10 },
+                    "nextScene": "ch4"
+                },
+                {
+                    "text": "C. 寧死不屈：痛罵逆賊，殺身成仁！",
+                    "effects": { "power": -100, "integrity": 100, "family": -100 },
+                    "nextScene": "end_martyr"
+                }
+            ]
+        },
+        "ch4": {
+            "text": "【最終章：晚年的回望】<br>亂世漸平，你已白髮蒼蒼。學生問你：「老師，這輩子您後悔嗎？」",
+            "choices": [
+                {
+                    "text": "看結局",
+                    "effects": { "power": 0, "integrity": 0, "family": 0 },
+                    "nextScene": "calc_ending"
+                }
+            ]
+        }
+    }
+}
