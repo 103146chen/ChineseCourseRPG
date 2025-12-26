@@ -1,34 +1,48 @@
+/* =========================================
+   RPG Engine 核心樣式表 (Responsive Ver.)
+   ========================================= */
+
 :root {
     --text-color: #fff;
     --accent-color: #d4af37; /* 金色 */
-    --dialogue-bg: rgba(0, 0, 0, 0.75); /* 半透明黑 */
+    --accent-hover: #f1c40f; /* 亮金色 */
+    --dialogue-bg: rgba(0, 0, 0, 0.85);
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+    --border-radius: 8px;
+}
+
+/* 基礎設定 */
+* {
+    box-sizing: border-box; /* 關鍵：確保 padding 不會撐大寬度 */
 }
 
 body {
     margin: 0;
     padding: 0;
     background-color: #000;
-    font-family: 'Noto Serif TC', serif;
-    height: 100vh;
-    overflow: hidden; /* 禁止捲動 */
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+    height: 100vh; /* 視窗全高 */
+    height: 100dvh; /* 針對行動裝置的動態高度 */
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden; /* 禁止網頁捲動 */
 }
 
-/* 遊戲主視窗 (保持比例或全螢幕) */
+/* 遊戲主視窗 */
 .game-window {
     position: relative;
     width: 100%;
     height: 100%;
-    max-width: 1024px; /* 限制最大寬度以免在大螢幕太寬 */
-    max-height: 768px;
+    /* 在大螢幕上限制最大尺寸，保持 4:3 或 16:9 視覺感，避免太寬 */
+    max-width: 1200px; 
+    max-height: 900px;
     background: #111;
     overflow: hidden;
     box-shadow: 0 0 50px rgba(0,0,0,0.5);
 }
 
-/* 1. 背景層 */
+/* 1. 背景層 (最底層) */
 .background-layer {
     position: absolute;
     top: 0;
@@ -37,99 +51,85 @@ body {
     height: 100%;
     background-size: cover;
     background-position: center;
-    transition: background-image 1s ease-in-out; /* 淡入淡出效果 */
+    transition: background-image 1s ease-in-out;
     z-index: 1;
 }
 
-/* 2. 數值 UI */
-/* 僅列出修改部分，其餘保持 Visual Novel 風格 */
-
+/* 2. 數值 UI (左上角) */
 .stats-overlay {
     position: absolute;
     top: 20px;
     left: 20px;
-    z-index: 10;
-    background: rgba(0,0,0,0.6);
+    z-index: 10; /* 高於背景 */
+    background: rgba(0, 0, 0, 0.6);
     padding: 15px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     min-width: 220px;
-    border-left: 3px solid var(--accent-color);
+    max-width: 40%; /* 防止手機上太寬 */
+    border-left: 4px solid var(--accent-color);
+    backdrop-filter: blur(2px);
 }
 
 .stat-row {
     display: flex;
     align-items: center;
     margin-bottom: 8px;
-    font-size: 0.9rem;
     color: #fff;
+    font-size: 0.95rem;
 }
 
 .stat-row:last-child { margin-bottom: 0; }
+.stat-row .label { width: 80px; font-weight: bold; text-shadow: 1px 1px 2px #000; white-space: nowrap;}
+.bar-bg { flex-grow: 1; background: #444; height: 8px; border-radius: 4px; margin: 0 10px; overflow: hidden; }
+.bar-fill { height: 100%; transition: width 0.5s ease; }
+.val-text { width: 30px; text-align: right; font-family: monospace; font-size: 0.9em; }
 
-.stat-row .label {
-    width: 90px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px black;
-}
-
-.bar-bg {
-    flex-grow: 1;
-    background: #444;
-    height: 8px;
-    border-radius: 4px;
-    margin: 0 10px;
-    overflow: hidden;
-}
-
-.bar-fill {
-    height: 100%;
-    transition: width 0.5s ease;
-}
-
-.val-text {
-    width: 30px;
-    text-align: right;
-    font-family: monospace;
-}
-
-/* 3. 對話框 */
+/* 3. 對話框 (底部) */
 .dialogue-container {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 30%; /* 佔據下方 30% */
+    height: 30%; /* 預設佔據 30% 高度 */
+    min-height: 200px;
     background: var(--dialogue-bg);
     border-top: 2px solid var(--accent-color);
-    padding: 20px 40px;
-    box-sizing: border-box;
-    z-index: 5;
+    padding: 30px 40px; /* 增加左右間距 */
+    z-index: 20; /* 高於數值 UI */
     display: flex;
     flex-direction: column;
 }
 
-.char-name {
-    font-weight: bold;
-    color: var(--accent-color);
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
 .dialogue-text {
     color: #fff;
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2.5vw, 1.3rem); /* 動態字體大小 */
     line-height: 1.6;
     text-shadow: 1px 1px 2px #000;
+    overflow-y: auto; /* 文字太多可捲動 */
+    padding-right: 10px;
+    flex-grow: 1;
 }
 
+/* 自訂捲軸樣式 */
+.dialogue-text::-webkit-scrollbar { width: 6px; }
+.dialogue-text::-webkit-scrollbar-thumb { background: #666; border-radius: 3px; }
+
 .next-arrow {
-    position: absolute;
-    bottom: 20px;
-    right: 30px;
+    align-self: flex-end; /* 靠右對齊 */
     color: var(--accent-color);
     cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    transition: all 0.3s;
     animation: bounce 1s infinite;
-    font-size: 0.9rem;
+    user-select: none;
+}
+
+.next-arrow:hover {
+    border-color: var(--accent-color);
+    background: rgba(255,255,255,0.1);
 }
 
 @keyframes bounce {
@@ -137,30 +137,37 @@ body {
     50% { transform: translateY(-5px); }
 }
 
-/* 4. 選項層 */
+/* 4. 選項層 (全螢幕覆蓋) - 解決按鈕被覆蓋的關鍵 */
 .choices-layer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.6); /* 變暗背景 */
-    z-index: 20;
+    background: var(--overlay-bg); /* 變暗背景，突顯選項 */
+    z-index: 50; /* 關鍵：必須遠高於對話框(20) */
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
 }
 
 .choices-box {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 60%;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90%; /* 防止選項太多超出畫面 */
+    overflow-y: auto; /* 選項太多時可捲動 */
+    padding: 10px;
 }
 
 .choice-btn {
-    background: rgba(20, 20, 20, 0.9);
+    background: rgba(20, 20, 20, 0.95);
     border: 1px solid var(--accent-color);
+    border-radius: var(--border-radius);
     color: #fff;
     padding: 20px;
     font-size: 1.1rem;
@@ -168,30 +175,129 @@ body {
     transition: all 0.2s;
     text-align: left;
     font-family: inherit;
+    line-height: 1.4;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 .choice-btn:hover {
     background: var(--accent-color);
     color: #000;
-    transform: scale(1.02);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
 }
 
-/* 5. 結局層 */
+.choice-btn:active {
+    transform: translateY(0);
+}
+
+/* 5. 結局層 (最高層) */
 .ending-layer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: #000;
-    z-index: 100;
+    background: rgba(0,0,0,0.95);
+    z-index: 100; /* 最高層級 */
     color: #fff;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 50px;
+    padding: 40px;
+    overflow-y: auto; /* 內容過長可捲動 */
+}
+
+.ending-content-wrapper {
+    max-width: 800px;
+    width: 100%;
+}
+
+.ending-layer h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--accent-color);
+    margin-bottom: 30px;
+    letter-spacing: 5px;
+}
+
+.ending-layer p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    line-height: 1.8;
+}
+
+.ending-layer .quote {
+    font-style: italic;
+    color: #aaa;
+    font-size: 1.4rem;
+    margin: 40px 0;
+    padding: 20px;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+}
+
+.restart-btn {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 15px 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 30px;
+    border-radius: 50px;
+}
+
+.restart-btn:hover {
+    background: var(--accent-color);
+    color: #000;
 }
 
 .hidden { display: none !important; }
+
+/* =========================================
+   RWD 手機版適配 (螢幕寬度小於 768px)
+   ========================================= */
+@media (max-width: 768px) {
+    /* 1. 調整數值顯示 */
+    .stats-overlay {
+        top: 10px;
+        left: 10px;
+        right: 10px; /* 寬度撐滿 */
+        width: auto;
+        max-width: none;
+        padding: 10px;
+        display: flex; /* 改為橫向排列 (如果項目不多) 或維持直向但縮小間距 */
+        flex-direction: column; 
+    }
+    
+    .stat-row { font-size: 0.8rem; }
+    .bar-bg { height: 6px; }
+
+    /* 2. 調整對話框高度 */
+    .dialogue-container {
+        height: 40%; /* 手機上對話框佔比加大，方便閱讀 */
+        padding: 20px;
+    }
+
+    .dialogue-text {
+        font-size: 1.1rem; /* 確保手機閱讀舒適 */
+    }
+
+    /* 3. 調整選項按鈕 */
+    .choices-box {
+        width: 90%;
+        gap: 10px;
+    }
+
+    .choice-btn {
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    /* 4. 結局畫面 */
+    .ending-layer {
+        padding: 20px;
+    }
+}
