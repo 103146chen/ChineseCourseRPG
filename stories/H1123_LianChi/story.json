@@ -72,7 +72,6 @@
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
                 "<b>【序章：亂世的開端】</b><br>唐朝末年，長安城的繁華已成過往雲煙。你年輕時曾以此為傲，如今卻只見滿目瘡痍。",
-                "這是一個沒有絕對忠誠的時代。昨天的主公，今天可能就是階下囚；早上的將軍，晚上可能就成了皇帝。",
                 "風雪夜裡，父親臨終前握著你的手說：「兒啊，活下去。只有活著，才能看到這亂世何時結束。」",
                 "但你回想起恩師的教導：「士大夫立身處世，當有氣節，不可隨波逐流，行己有恥。」"
             ],
@@ -80,14 +79,34 @@
                 {
                     "text": "A. 銘記生存：父親說得對，亂世中生存是唯一的真理。",
                     "effects": { "power": 10, "integrity": -5, "family": 5 },
-                    "nextScene": "ch1"
+                    "nextScene": "intro_res_survival"
                 },
                 {
                     "text": "B. 銘記氣節：恩師的教誨不敢忘，人不能活得像禽獸。",
                     "effects": { "power": -5, "integrity": 10, "family": 0 },
-                    "nextScene": "ch1"
+                    "nextScene": "intro_res_integrity"
                 }
             ]
+        },
+        "intro_res_survival": {
+            "bg": "images/bg_intro.png",
+            "bgm": "audio/bgm_sad.mp3",
+            "dialogues": [
+                "父親聽了你的回答，眼中閃過一絲複雜的神色，似乎是解脫，又似乎是無奈。",
+                "他緩緩鬆開了手，喃喃道：「也好，也好……活著就好。」",
+                "你感受到父親手掌的溫度逐漸流失，心中的生存本能壓過了悲傷。"
+            ],
+            "choices": [ { "text": "數年後...", "effects": {}, "nextScene": "ch1" } ]
+        },
+        "intro_res_integrity": {
+            "bg": "images/bg_intro.png",
+            "bgm": "audio/bgm_sad.mp3",
+            "dialogues": [
+                "父親聽了你的回答，原本混濁的眼神忽然亮了一下，彷彿看到了年輕時的自己。",
+                "他費力地點了點頭，嘴角露出一絲欣慰的微笑：「難……但這才是我的兒子。」",
+                "窗外的風雪似乎更大了，但你心中的信念卻如燭火般堅定。"
+            ],
+            "choices": [ { "text": "數年後...", "effects": {}, "nextScene": "ch1" } ]
         },
         "ch1": {
             "bg": "images/bg_ch1.png",
@@ -102,14 +121,34 @@
                 {
                     "text": "A. 同流合污：亂世之中，這點糧食救不了人，不如救自己。",
                     "effects": { "power": 20, "integrity": -15, "family": 10 },
-                    "nextScene": "ch2"
+                    "nextScene": "ch1_res_corrupt"
                 },
                 {
                     "text": "B. 開倉賑糧：這是不義之財！我應將糧食分給流民。",
                     "effects": { "power": -10, "integrity": 20, "family": -5 },
-                    "nextScene": "ch2"
+                    "nextScene": "ch1_res_noble"
                 }
             ]
+        },
+        "ch1_res_corrupt": {
+            "bg": "images/bg_ch1.png",
+            "bgm": "audio/bgm_court.mp3",
+            "dialogues": [
+                "你接過了王大人遞來的銀票，沉甸甸的。",
+                "王大人大笑著拍拍你的肩膀：「老弟，這就對了！有了這些錢，你也能在京城置辦宅子了。」",
+                "你陪著笑臉，盡量不去聽窗外流民的哭喊聲，將銀票揣進了懷裡。"
+            ],
+            "choices": [ { "text": "繼續仕途...", "effects": {}, "nextScene": "ch2" } ]
+        },
+        "ch1_res_noble": {
+            "bg": "images/bg_ch1.png",
+            "bgm": "audio/bgm_court.mp3",
+            "dialogues": [
+                "你猛地推開了面前的酒杯，厲聲道：「王大人，這種喝兵血的事，我做不來！」",
+                "你轉身下令開倉賑糧。王大人的臉色瞬間變得陰沉，冷冷說道：「你會後悔的。」",
+                "雖然得罪了同僚，但看著領到糧食的百姓眼中的感激，你覺得這一切都值得。"
+            ],
+            "choices": [ { "text": "繼續仕途...", "effects": {}, "nextScene": "ch2" } ]
         },
         "ch2": {
             "bg": "images/bg_ch2.png",
@@ -124,21 +163,40 @@
                 {
                     "text": "A. 揮毫歌頌：效法馮道，為了一家老小，我寫！",
                     "effects": { "power": 30, "integrity": -30, "family": 20 },
-                    "nextScene": "ch3"
+                    "nextScene": "ch2_res_submit"
                 },
                 {
                     "text": "B. 擲筆拒絕：這種不忠不義之徒，我不屑為伍！",
                     "effects": { "power": -40, "integrity": 40, "family": -20 },
-                    "nextScene": "ch3"
+                    "nextScene": "ch2_res_refuse"
                 }
             ]
+        },
+        "ch2_res_submit": {
+            "bg": "images/bg_ch2.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "你顫抖著手提起筆，在紙上寫下了違心的讚美之詞。",
+                "新皇帝看後龍心大悅，賞賜你黃金百兩。刀斧手退下了，你保住了性命和富貴。",
+                "但當你回到家，看到鏡中的自己，卻覺得那張臉變得如此陌生與猥瑣。"
+            ],
+            "choices": [ { "text": "時局變遷...", "effects": {}, "nextScene": "ch3" } ]
+        },
+        "ch2_res_refuse": {
+            "bg": "images/bg_ch2.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "「啪！」你將毛筆重重摔在地上，墨汁濺了一地。",
+                "「要殺便殺！要我為逆賊歌功頌德，絕無可能！」你昂首挺胸。",
+                "對方被你的氣勢震懾，雖然沒有當場殺你，但將你全家流放。你在囚車中，卻感到前所未有的輕鬆。"
+            ],
+            "choices": [ { "text": "時局變遷...", "effects": {}, "nextScene": "ch3" } ]
         },
         "ch3": {
             "bg": "images/bg_ch3.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
                 "<b>【第三章：變換的旗幟】</b><br>短短十年間，你所在的城池換了三個主人。梁、唐、晉、漢、周……朝代像走馬燈一樣更換。",
-                "每一次改朝換代，都是一次清洗。許多同僚因為「站錯隊」而家破人亡。",
                 "現在，新的征服者契丹人入主中原。他們要求漢官學習胡語，甚至模仿胡人的習俗。",
                 "許多士大夫為了保住官位，紛紛改穿胡服，甚至教孩子學胡語以取悅新主。"
             ],
@@ -146,14 +204,34 @@
                 {
                     "text": "A. 順應時勢：學胡語、穿胡服，識時務者為俊傑。",
                     "effects": { "power": 20, "integrity": -20, "family": 10 },
-                    "nextScene": "ch4"
+                    "nextScene": "ch3_res_adapt"
                 },
                 {
                     "text": "B. 雖存若歿：雖然被迫留任，但堅持漢家衣冠，不獻媚。",
                     "effects": { "power": -10, "integrity": 10, "family": -5 },
-                    "nextScene": "ch4"
+                    "nextScene": "ch3_res_resist"
                 }
             ]
+        },
+        "ch3_res_adapt": {
+            "bg": "images/bg_ch3.png",
+            "bgm": "audio/bgm_sad.mp3",
+            "dialogues": [
+                "你換上了窄袖的胡服，學著彎刀的佩戴方式。",
+                "在宴會上，你用彆腳的胡語向新主祝酒，引得權貴們哈哈大笑，他們很喜歡你的「懂事」。",
+                "顏之推曾譏諷這種行為，但你告訴自己：「這是為了生存。」"
+            ],
+            "choices": [ { "text": "歲月流逝...", "effects": {}, "nextScene": "ch4" } ]
+        },
+        "ch3_res_resist": {
+            "bg": "images/bg_ch3.png",
+            "bgm": "audio/bgm_sad.mp3",
+            "dialogues": [
+                "你依舊穿著寬袍大袖的漢服，在滿是胡服的朝堂上顯得格格不入。",
+                "面對新主的質問，你沈默不語（俯而不答）。",
+                "雖然因此被邊緣化，俸祿也被削減，但你保住了作為士大夫最後的尊嚴。"
+            ],
+            "choices": [ { "text": "歲月流逝...", "effects": {}, "nextScene": "ch4" } ]
         },
         "ch4": {
             "bg": "images/bg_ch4.png",
@@ -191,47 +269,58 @@
                     "text": ">> 繼承身世：富貴而無名 (廉恥 < 40)",
                     "req": { "stat": "integrity", "op": "<", "val": 40 },
                     "effects": { "power": 80, "integrity": 20, "family": 100 },
-                    "nextScene": "ch5_rich"
+                    "nextScene": "ch5_rich_intro"
                 },
                 {
                     "text": ">> 繼承身世：清貧而有節 (廉恥 >= 40)",
                     "req": { "stat": "integrity", "op": ">=", "val": 40 },
                     "effects": { "power": 20, "integrity": 80, "family": 60 },
-                    "nextScene": "ch5_poor"
+                    "nextScene": "ch5_poor_intro"
                 }
             ]
+        },
+        "ch5_rich_intro": {
+            "bg": "images/bg_ch5_rich.png",
+            "bgm": "audio/bgm_court.mp3",
+            "dialogues": [
+                "你在一張雕花紅木大床上醒來，身邊是綾羅綢緞。",
+                "因為先祖的「生存哲學」，家族幾百年來左右逢源，積累了潑天富貴。",
+                "但你也發現，家族祠堂裡少有牌坊，鄉里人提起你們家，眼神中總帶著一絲輕蔑。"
+            ],
+            "choices": [ { "text": "面對新亂世...", "effects": {}, "nextScene": "ch5_rich" } ]
+        },
+        "ch5_poor_intro": {
+            "bg": "images/bg_ch5_poor.png",
+            "bgm": "audio/bgm_sad.mp3",
+            "dialogues": [
+                "你在簡陋的竹榻上醒來，窗外是蕭瑟的秋風。",
+                "因為先祖堅持「清白傳家」，家族屢遭政治迫害，家道中落。",
+                "但你看著牆上掛著的「忠厚傳家久，詩書繼世長」對聯，內心充滿了平靜與驕傲。"
+            ],
+            "choices": [ { "text": "面對新亂世...", "effects": {}, "nextScene": "ch5_poor" } ]
         },
         "ch5_rich": {
             "bg": "images/bg_ch5_rich.png",
             "bgm": "audio/bgm_court.mp3",
             "dialogues": [
-                "<b>【第五章：世家子弟】</b><br>因為先祖善於鑽營，你的家族成為了江南望族，田產萬頃。",
-                "你從小錦衣玉食，父親常說：「朝廷是誰的不重要，我們家的富貴才是真的。」",
-                "然而，雖有金銀，鄉里的讀書人卻私下瞧不起你們，說你們是「長樂老之後」，缺乏風骨。",
-                "如今清兵入關，揚州十日，嘉定三屠。烽火逼近了你的莊園。"
+                "<b>【第五章：世家子弟】</b><br>如今清兵入關，揚州十日，嘉定三屠。烽火逼近了你的莊園。",
+                "父親焦急地在廳堂踱步：「朝廷是誰的不重要，重要的是保住這份家業！」",
+                "你看著滿屋的金銀，思考著如何在這場浩劫中存活。"
             ],
             "choices": [
-                {
-                    "text": "面對亂世",
-                    "effects": { "power": 0, "integrity": 0, "family": 0 },
-                    "nextScene": "ch6"
-                }
+                { "text": "面對抉擇", "effects": {}, "nextScene": "ch6" }
             ]
         },
         "ch5_poor": {
             "bg": "images/bg_ch5_poor.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
-                "<b>【第五章：寒門傲骨】</b><br>因為先祖堅持氣節，你的家族屢遭貶謫，如今已是家徒四壁。",
-                "但你的父親自幼教你讀《正氣歌》，鄉里鄉親都敬重你們家是「清白門第」。",
-                "如今明朝大廈將傾，清兵鐵騎南下。雖然你沒有錢財可被搶，但作為士林領袖，你面臨著更嚴峻的考驗。"
+                "<b>【第五章：寒門傲骨】</b><br>如今明朝大廈將傾，清兵鐵騎南下。",
+                "雖然你沒有錢財可被搶，但作為士林領袖，許多讀書人都看著你的動向。",
+                "你整理好衣冠，準備迎接這場關於靈魂的拷問。"
             ],
             "choices": [
-                {
-                    "text": "面對亂世",
-                    "effects": { "power": 0, "integrity": 0, "family": 0 },
-                    "nextScene": "ch6"
-                }
+                { "text": "面對抉擇", "effects": {}, "nextScene": "ch6" }
             ]
         },
         "ch6": {
@@ -240,21 +329,40 @@
             "dialogues": [
                 "<b>【第六章：剃髮令】</b><br>清軍攻佔江南，頒布了嚴酷的「剃髮令」：留頭不留髮，留髮不留頭。",
                 "街道上，滿是穿著滿人服飾的士兵。漢人百姓排著長隊，在剃頭匠的刀下流淚剃髮。",
-                "你的好友，一位平日激昂慷慨的書生，摸著自己的頭顱對你說：「頭皮之癢不僅是癢，更是痛啊！兄台，你剃嗎？」",
-                "如果不剃，全家可能被株連；如果剃了，便是背棄了「身體髮膚受之父母」的孝道與民族尊嚴。"
+                "你的好友，一位平日激昂慷慨的書生，摸著自己的頭顱對你說：「頭皮之癢不僅是癢，更是痛啊！兄台，你剃嗎？」"
             ],
             "choices": [
                 {
                     "text": "A. 忍辱剃髮：為了家族存續，暫且忍耐，留有用之身。",
                     "effects": { "power": 10, "integrity": -20, "family": 20 },
-                    "nextScene": "ch7"
+                    "nextScene": "ch6_res_shave"
                 },
                 {
                     "text": "B. 斷髮抗爭：逃入深山，蓄髮明志，絕不臣服異族！",
                     "effects": { "power": -20, "integrity": 30, "family": -10 },
-                    "nextScene": "ch7"
+                    "nextScene": "ch6_res_flee"
                 }
             ]
+        },
+        "ch6_res_shave": {
+            "bg": "images/bg_ch6.png",
+            "bgm": "audio/bgm_crisis.mp3",
+            "dialogues": [
+                "你閉上眼睛，任由冰冷的刀鋒劃過頭頂。一縷縷黑髮落地，彷彿尊嚴也隨之破碎。",
+                "你看著鏡中拖著辮子的自己，淚水無聲滑落。",
+                "好友鄙夷地看了你一眼，轉身離去。你活了下來，但心死了一半。"
+            ],
+            "choices": [ { "text": "苟活於世...", "effects": {}, "nextScene": "ch7" } ]
+        },
+        "ch6_res_flee": {
+            "bg": "images/bg_transition.png",
+            "bgm": "audio/bgm_wind.mp3",
+            "dialogues": [
+                "你拒絕剃髮，帶著家人連夜逃入深山。",
+                "山中生活艱苦，時常要躲避清軍的搜捕。",
+                "但每當你在溪邊梳洗那頭長髮時，你感到無比的坦蕩。你是這山林間自由的靈魂。"
+            ],
+            "choices": [ { "text": "堅持氣節...", "effects": {}, "nextScene": "ch7" } ]
         },
         "ch7": {
             "bg": "images/bg_ch7.png",
@@ -269,14 +377,34 @@
                 {
                     "text": "A. 應召出仕：利用職權修書修史，保存漢家文化。",
                     "effects": { "power": 30, "integrity": -10, "family": 10 },
-                    "nextScene": "ch8"
+                    "nextScene": "ch7_res_accept"
                 },
                 {
                     "text": "B. 堅拒不就：自稱老病，誓死不食周粟。",
                     "effects": { "power": -30, "integrity": 30, "family": -10 },
-                    "nextScene": "ch8"
+                    "nextScene": "ch7_res_reject"
                 }
             ]
+        },
+        "ch7_res_accept": {
+            "bg": "images/bg_ch7.png",
+            "bgm": "audio/bgm_calm.mp3",
+            "dialogues": [
+                "你嘆了口氣，接過了詔書。「文化需要傳承，若我們都死絕了，誰來記錄這段歷史？」",
+                "你進入了翰林院，編修明史。雖然你可以保護書籍不被銷毀，",
+                "但每當看到顧炎武那封「行己有恥」的信，你都不敢回覆。"
+            ],
+            "choices": [ { "text": "風暴將至...", "effects": {}, "nextScene": "ch8" } ]
+        },
+        "ch7_res_reject": {
+            "bg": "images/bg_ch7.png",
+            "bgm": "audio/bgm_calm.mp3",
+            "dialogues": [
+                "你將詔書原封不動地退回，並稱病不出。",
+                "「我已是前朝遺民，只想老死山林。」",
+                "朝廷使者憤然離去。你的生活更加困頓，但你的名聲卻在士林中越發響亮。"
+            ],
+            "choices": [ { "text": "風暴將至...", "effects": {}, "nextScene": "ch8" } ]
         },
         "ch8": {
             "bg": "images/bg_ch8.png",
@@ -291,14 +419,34 @@
                 {
                     "text": "A. 燒毀書稿：為了保全家族，毀掉一生的心血。",
                     "effects": { "power": 10, "integrity": -10, "family": 30 },
-                    "nextScene": "ch9"
+                    "nextScene": "ch8_res_burn"
                 },
                 {
                     "text": "B. 藏匿書稿：真理不該被掩蓋，冒死託付給信任的學生。",
                     "effects": { "power": -20, "integrity": 40, "family": -20 },
-                    "nextScene": "ch9"
+                    "nextScene": "ch8_res_hide"
                 }
             ]
+        },
+        "ch8_res_burn": {
+            "bg": "images/bg_ch8.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "你含著淚，將一張張書稿投入火盆。火焰吞噬了你一生的心血，也吞噬了真話。",
+                "官兵衝進來時，只看到一盆灰燼。他們無功而返。",
+                "家人抱著你痛哭。你保住了他們的性命，但你的靈魂從此殘缺不全。"
+            ],
+            "choices": [ { "text": "最終結局...", "effects": {}, "nextScene": "ch9" } ]
+        },
+        "ch8_res_hide": {
+            "bg": "images/bg_ch8.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "你將書稿塞進夾層牆壁，並囑咐最信任的學生日後取出。",
+                "「這本書比我的命更重要。」你平靜地說。",
+                "官兵帶走了你。你在獄中受盡折磨，但想到那本書將來會重見天日，你露出了一絲微笑。"
+            ],
+            "choices": [ { "text": "最終結局...", "effects": {}, "nextScene": "ch9" } ]
         },
         "ch9": {
             "bg": "images/bg_ch9.png",
