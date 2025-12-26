@@ -1,0 +1,270 @@
+{
+    "config": {
+        "title": "燭之武退秦師：舌戰群儒",
+        "stats": [
+            { "id": "trust", "name": "秦君信任度", "init": 20, "color": "#daa520" },
+            { "id": "courage", "name": "膽識", "init": 50, "color": "#b22222" },
+            { "id": "wisdom", "name": "智謀", "init": 50, "color": "#228b22" }
+        ]
+    },
+    "endings": [
+        {
+            "id": "hero_success",
+            "title": "【結局：不戰而屈人之兵】",
+            "desc": "你憑藉三寸不爛之舌，成功說服秦穆公退兵。秦晉聯盟瓦解，鄭國轉危為安。你的名字與這段傳奇一同載入史冊。",
+            "quote": "「國危矣！若使燭之武見秦君，師必退。」",
+            "image": "images/bg_ch9.png",
+            "priority": 100,
+            "conditions": [ { "stat": "trust", "op": ">=", "val": 80 } ]
+        },
+        {
+            "id": "failed_negotiation",
+            "title": "【結局：遊說失敗】",
+            "desc": "秦穆公對你的說辭不為所動，揮手讓人將你趕出大帳。秦晉聯軍攻破鄭國，生靈塗炭。",
+            "quote": "「微夫人之力不及此。」",
+            "image": "images/bg_ch1.png",
+            "priority": 50,
+            "conditions": [ { "stat": "trust", "op": "<", "val": 80 } ]
+        },
+        {
+            "id": "coward_refusal",
+            "title": "【結局：懷才不遇】",
+            "desc": "你拒絕了鄭文公的請求，固執於個人的恩怨。鄭國滅亡，你也隨之淹沒在歷史的塵埃中。",
+            "quote": "「臣之壯也，猶不如人；今老矣，無能為也已。」",
+            "image": "images/bg_ch2.png",
+            "priority": 10,
+            "conditions": [ { "stat": "courage", "op": "<", "val": 30 } ]
+        }
+    ],
+    "scenes": {
+        "intro": {
+            "bg": "images/bg_intro.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "<b>【第一章：危機降臨】</b><br>魯僖公三十年，秋。晉文公與秦穆公聯合圍攻鄭國。",
+                "晉軍駐紮在函陵，秦軍駐紮在氾南。鄭國危在旦夕。",
+                "你叫燭之武，是鄭國的一名老臣，負責養馬。雖然滿腹經綸，卻一生未受重用。",
+                "城外戰鼓雷鳴，城內人心惶惶。你像往常一樣在馬廄中，卻聽到了急促的腳步聲。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 靜觀其變：我只是一個養馬的，國家大事與我無關。",
+                    "effects": { "wisdom": 0, "courage": -5, "trust": 0 },
+                    "nextScene": "ch2"
+                },
+                {
+                    "text": "B. 心繫家國：雖然未受重用，但皮之不存，毛將焉附？",
+                    "effects": { "wisdom": 5, "courage": 5, "trust": 0 },
+                    "nextScene": "ch2"
+                }
+            ]
+        },
+        "ch2": {
+            "bg": "images/bg_ch2.png",
+            "bgm": "audio/bgm_court.mp3",
+            "dialogues": [
+                "<b>【第二章：老臣的怨懟】</b><br>原來是鄭文公派人來召見你。據說是大夫佚之狐推薦了你，說：「若使燭之武見秦君，師必退。」",
+                "來到殿上，鄭文公滿臉愁容，請求你出使秦營，勸退秦軍。",
+                "你看著眼前這位曾經忽視你的君主，心中五味雜陳。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 婉言推辭：「臣之壯也，猶不如人；今老矣，無能為也已。」",
+                    "effects": { "wisdom": 5, "courage": 0, "trust": 0 },
+                    "nextScene": "ch3_apology"
+                },
+                {
+                    "text": "B. 直接拒絕：早知如此，何必當初？我不去。",
+                    "effects": { "wisdom": -10, "courage": -20, "trust": 0 },
+                    "nextScene": "ch3_refuse"
+                }
+            ]
+        },
+        "ch3_refuse": {
+            "bg": "images/bg_ch2.png",
+            "bgm": "audio/bgm_sad.mp3",
+            "dialogues": [
+                "你固執地拒絕了鄭文公。鄭文公長嘆一聲，轉身離去。",
+                "幾日後，城破……"
+            ],
+            "choices": [ { "text": "結局...", "effects": {}, "nextScene": "end_coward" } ]
+        },
+        "end_coward": {
+            "bg": "images/bg_ch1.png",
+            "bgm": "audio/bgm_sad.mp3",
+            "dialogues": [ "你選擇了個人的恩怨，放棄了拯救國家的機會。" ],
+             "choices": []
+        },
+        "ch3_apology": {
+            "bg": "images/bg_ch3.png",
+            "bgm": "audio/bgm_court.mp3",
+            "dialogues": [
+                "<b>【第三章：臨危受命】</b><br>鄭文公聽了你的抱怨，並沒有生氣，反而向你道歉。",
+                "他說：「吾不能早用子，今急而求子，是寡人之過也。然鄭亡，子亦有不利焉。」",
+                "這番話既有誠懇的歉意，又點破了唇亡齒寒的利害關係。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 答應出使：為了國家，也為了證明自己，許之。",
+                    "effects": { "wisdom": 10, "courage": 10, "trust": 0 },
+                    "nextScene": "ch4"
+                }
+            ]
+        },
+        "ch4": {
+            "bg": "images/bg_ch4.png",
+            "bgm": "audio/bgm_night.mp3",
+            "dialogues": [
+                "<b>【第四章：夜縋而出】</b><br>夜深了，城外是秦晉聯軍密不透風的包圍。",
+                "城門無法開啟，你只能用繩子將自己從城牆上吊下去。",
+                "寒風凜冽，繩索在風中搖晃。這是一條通往敵營的險途，稍有不慎便是萬劫不復。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 小心翼翼：沈穩地尋找落腳點，悄無聲息地落地。",
+                    "effects": { "courage": 10, "wisdom": 5, "trust": 0 },
+                    "nextScene": "ch5"
+                },
+                {
+                    "text": "B. 迅速降落：事不宜遲，快點落地衝向秦營。",
+                    "effects": { "courage": 15, "wisdom": -5, "trust": 0 },
+                    "nextScene": "ch5"
+                }
+            ]
+        },
+        "ch5": {
+            "bg": "images/bg_ch5_rich.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "<b>【第五章：初見秦君】</b><br>你隻身來到秦營，見到了威嚴的秦穆公。",
+                "秦穆公看著你這個瘦弱的老人，眼中帶著幾分輕蔑與好奇。",
+                "你知道，開場的第一句話至關重要，必須立刻卸下他的心防。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 示弱以退：秦、晉圍鄭，鄭既知亡矣！",
+                    "effects": { "wisdom": 10, "trust": 20, "courage": 0 },
+                    "nextScene": "ch6"
+                },
+                {
+                    "text": "B. 義正辭嚴：秦君何故無端攻打我無辜之國？",
+                    "effects": { "wisdom": -10, "trust": -10, "courage": 5 },
+                    "nextScene": "ch6_fail"
+                }
+            ]
+        },
+        "ch6_fail": {
+             "bg": "images/bg_ch5_rich.png",
+             "bgm": "audio/bgm_tense.mp3",
+             "dialogues": ["秦穆公大怒：「敗軍之將，安敢言勇！」揮手將你以此趕出。"],
+             "choices": [ { "text": "談判破裂...", "effects": { "trust": -100 }, "nextScene": "end_failed" } ]
+        },
+        "end_failed": {
+             "bg": "images/bg_ch1.png",
+             "bgm": "audio/bgm_sad.mp3",
+             "dialogues": ["遊說失敗，鄭國命運已定。"],
+             "choices": []
+        },
+        "ch6": {
+            "bg": "images/bg_ch6.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "<b>【第六章：亡鄭陪鄰】</b><br>見秦穆公面色稍緩，你繼續說道：「若亡鄭而有益於君，敢以煩執事。」",
+                "你話鋒一轉，指出了地理上的矛盾：「越國以鄙遠，君知其難也。焉用亡鄭以陪鄰？」",
+                "你需要點明：滅掉鄭國，只是增加了鄰國（晉國）的土地，對秦國毫無好處。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 分析利弊：鄰之厚，君之薄也。",
+                    "effects": { "wisdom": 10, "trust": 20, "courage": 0 },
+                    "nextScene": "ch7"
+                },
+                {
+                    "text": "B. 請求憐憫：請君王可憐我們鄭國百姓。",
+                    "effects": { "wisdom": -5, "trust": -5, "courage": 0 },
+                    "nextScene": "ch7_weak"
+                }
+            ]
+        },
+        "ch7_weak": {
+            "bg": "images/bg_ch6.png",
+             "bgm": "audio/bgm_tense.mp3",
+             "dialogues": ["秦穆公冷笑一聲，似乎對你的哀求並不感興趣。你需要更強有力的理由。"],
+             "choices": [ { "text": "繼續遊說...", "effects": {}, "nextScene": "ch7" } ]
+        },
+        "ch7": {
+            "bg": "images/bg_ch7.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "<b>【第七章：東道主】</b><br>秦穆公陷入了沈思。你趁熱打鐵，提出如果保留鄭國，對秦國有什麼具體的好處。",
+                "「若舍鄭以為東道主，行李之往來，共其乏困，君亦無所害。」"
+            ],
+            "choices": [
+                {
+                    "text": "A. 利益誘惑：我們會提供秦國使者所需的物資。",
+                    "effects": { "wisdom": 10, "trust": 15, "courage": 0 },
+                    "nextScene": "ch8"
+                },
+                {
+                    "text": "B. 結盟承諾：鄭國將永遠臣服於秦國。",
+                    "effects": { "wisdom": 0, "trust": 5, "courage": 0 },
+                    "nextScene": "ch8"
+                }
+            ]
+        },
+        "ch8": {
+            "bg": "images/bg_ch8.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "<b>【第八章：朝濟夕版】</b><br>是時候挑撥秦晉的關係了。你提起了往事，試探秦穆公對晉國的信任度。",
+                "「且君嘗為晉君賜矣，許君焦、瑕，朝濟而夕設版焉，君之所知也。」",
+                "晉惠公曾經答應割讓焦、瑕二邑給秦國，卻在渡河回國後的當天晚上就修築防禦工事拒絕履行諾言。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 喚醒舊怨：晉國反覆無常，不可信賴。",
+                    "effects": { "wisdom": 10, "trust": 15, "courage": 0 },
+                    "nextScene": "ch9"
+                }
+            ]
+        },
+        "ch9": {
+            "bg": "images/bg_ch9.png",
+            "bgm": "audio/bgm_tense.mp3",
+            "dialogues": [
+                "<b>【第九章：肆其西封】</b><br>最後，你發出了最致命的一擊。你指出了晉國貪得無厭的本性，以及對秦國未來的威脅。",
+                "「夫晉，何厭之有？既東封鄭，又欲肆其西封。若不闕秦，將焉取 之？」",
+                "如果晉國滅了東邊的鄭國，下一步必然是向西擴張，侵損秦國的土地。"
+            ],
+            "choices": [
+                {
+                    "text": "A. 點明威脅：闕秦以利晉，唯君圖之！",
+                    "effects": { "wisdom": 15, "trust": 20, "courage": 0 },
+                    "nextScene": "ch10"
+                }
+            ]
+        },
+        "ch10": {
+            "bg": "images/bg_intro.png",
+            "bgm": "audio/bgm_court.mp3",
+            "dialogues": [
+                "<b>【第十章：化險為夷】</b><br>聽完你的分析，秦穆公恍然大悟，說道：「秦伯說。」",
+                "秦穆公當即決定與鄭國結盟，並留下杞子、逢孫、楊孫三位將軍協助防守，隨後率軍回國。",
+                "晉文公見秦軍撤退，亦決定撤軍。一場滅國之禍，就在你的言談之間化解了。"
+            ],
+            "choices": [
+                {
+                    "text": "查看結局",
+                    "effects": {},
+                    "nextScene": "check_ending"
+                }
+            ]
+        },
+        "check_ending": {
+            "bg": "images/bg_intro.png",
+            "bgm": "audio/bgm_court.mp3",
+            "dialogues": ["..."],
+            "choices": []
+        }
+    }
+}
