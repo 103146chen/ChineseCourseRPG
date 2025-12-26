@@ -71,20 +71,30 @@
             "bg": "images/bg_intro.png",
             "bgm": "audio/bgm_sad.mp3",
             "dialogues": [
-                "<b>【序章：亂世的開端】</b><br>唐朝末年，長安城的繁華已成過往雲煙。你年輕時曾以此為傲，如今卻只見滿目瘡痍。",
-                "風雪夜裡，父親臨終前握著你的手說：「兒啊，活下去。只有活著，才能看到這亂世何時結束。」",
-                "但你回想起恩師的教導：「士大夫立身處世，當有氣節，不可隨波逐流，行己有恥。」"
+                "<b>【序章：亂世的開端】</b><br>歡迎來到《士大夫的抉擇》。在本劇本中，你的每一個選擇都將決定你成為何種歷史人物。",
+                "<b>【本章節共有 6 種結局】</b>：<br>1. 捨生取義（烈士）<br>2. 萬世師表（大儒）<br>3. 亂世松柏（清流）<br>4. 長樂老再世（權臣）<br>5. 隨波逐流（凡人）<br>6. 家破人亡（悲劇）",
+                "請謹慎選擇，試著在「生存」與「氣節」間找到你的答案。<br>父親臨終前握著你的手說：「兒啊，活下去……」"
             ],
             "choices": [
                 {
                     "text": "A. 銘記生存：父親說得對，亂世中生存是唯一的真理。",
                     "effects": { "power": 10, "integrity": -5, "family": 5 },
-                    "nextScene": "intro_res_survival"
+                    "nextScene": "intro_res_survival",
+                    "analysis": {
+                        "status": "info",
+                        "title": "生存本能",
+                        "content": "你選擇了「生存優先」。在亂世中，這是一種無可厚非的生物本能，但可能使你在道德抉擇上容易妥協。"
+                    }
                 },
                 {
                     "text": "B. 銘記氣節：恩師的教誨不敢忘，人不能活得像禽獸。",
                     "effects": { "power": -5, "integrity": 10, "family": 0 },
-                    "nextScene": "intro_res_integrity"
+                    "nextScene": "intro_res_integrity",
+                    "analysis": {
+                        "status": "success",
+                        "title": "堅守禮教",
+                        "content": "你選擇了「氣節優先」。這符合課文中提到的「禮義廉恥，國之四維」，展現了儒家士大夫的風骨。"
+                    }
                 }
             ]
         },
@@ -121,12 +131,22 @@
                 {
                     "text": "A. 同流合污：亂世之中，這點糧食救不了人，不如救自己。",
                     "effects": { "power": 20, "integrity": -15, "family": 10 },
-                    "nextScene": "ch1_res_corrupt"
+                    "nextScene": "ch1_res_corrupt",
+                    "analysis": {
+                        "status": "warning",
+                        "title": "閹然媚世",
+                        "content": "你選擇了與世俗同流合污。這對應課文中提到的「無恥者」，雖然獲得了利益，但失去了身為士大夫的底線。"
+                    }
                 },
                 {
                     "text": "B. 開倉賑糧：這是不義之財！我應將糧食分給流民。",
                     "effects": { "power": -10, "integrity": 20, "family": -5 },
-                    "nextScene": "ch1_res_noble"
+                    "nextScene": "ch1_res_noble",
+                    "analysis": {
+                        "status": "success",
+                        "title": "行己有恥",
+                        "content": "你拒絕了不義之財，展現了孟子所說的「羞惡之心」。雖然得罪了同僚，但你守住了「廉」的界線。"
+                    }
                 }
             ]
         },
@@ -163,12 +183,22 @@
                 {
                     "text": "A. 揮毫歌頌：效法馮道，為了一家老小，我寫！",
                     "effects": { "power": 30, "integrity": -30, "family": 20 },
-                    "nextScene": "ch2_res_submit"
+                    "nextScene": "ch2_res_submit",
+                    "analysis": {
+                        "status": "warning",
+                        "title": "效法馮道",
+                        "content": "你選擇了如馮道般的圓滑生存之道。歐陽脩批評：「士大夫之無恥，是謂國恥。」你為了保全自己，拋棄了氣節。"
+                    }
                 },
                 {
                     "text": "B. 擲筆拒絕：這種不忠不義之徒，我不屑為伍！",
                     "effects": { "power": -40, "integrity": 40, "family": -20 },
-                    "nextScene": "ch2_res_refuse"
+                    "nextScene": "ch2_res_refuse",
+                    "analysis": {
+                        "status": "success",
+                        "title": "不事二主",
+                        "content": "你選擇了拒絕。雖然面臨殺身之禍，但你體現了「士可殺不可辱」的精神，不願為逆賊歌功頌德。"
+                    }
                 }
             ]
         },
@@ -204,12 +234,22 @@
                 {
                     "text": "A. 順應時勢：學胡語、穿胡服，識時務者為俊傑。",
                     "effects": { "power": 20, "integrity": -20, "family": 10 },
-                    "nextScene": "ch3_res_adapt"
+                    "nextScene": "ch3_res_adapt",
+                    "analysis": {
+                        "status": "warning",
+                        "title": "顏氏之譏",
+                        "content": "這正是《顏氏家訓》中譏諷的「教子學鮮卑語、彈琵琶」以求榮華富貴。顧炎武認為這種行為是「無恥之甚」。"
+                    }
                 },
                 {
                     "text": "B. 雖存若歿：雖然被迫留任，但堅持漢家衣冠，不獻媚。",
                     "effects": { "power": -10, "integrity": 10, "family": -5 },
-                    "nextScene": "ch3_res_resist"
+                    "nextScene": "ch3_res_resist",
+                    "analysis": {
+                        "status": "success",
+                        "title": "小宛之意",
+                        "content": "你雖然身處亂世無法脫身，但內心保持警惕，不願媚俗。這符合顏之推所說的「尚有《小宛》詩人之意」，懂得深自警惕。"
+                    }
                 }
             ]
         },
@@ -246,12 +286,22 @@
                 {
                     "text": "A. 厚黑生存術：孩子，臉皮要厚，心要黑，活著最重要。",
                     "effects": { "power": 30, "integrity": -50, "family": 20 },
-                    "nextScene": "transition"
+                    "nextScene": "transition",
+                    "analysis": {
+                        "status": "warning",
+                        "title": "無恥家訓",
+                        "content": "你將「無恥」作為生存法則傳給了後代。這雖然可能讓家族在亂世中存活，但也種下了道德敗壞的種子。"
+                    }
                 },
                 {
                     "text": "B. 清白傳家：寧可窮困，不可失了讀書人的骨氣。",
                     "effects": { "power": -30, "integrity": 50, "family": -10 },
-                    "nextScene": "transition"
+                    "nextScene": "transition",
+                    "analysis": {
+                        "status": "success",
+                        "title": "清白家風",
+                        "content": "你選擇了以「廉恥」傳家。這不僅是個人的修養，更是為了培養子孫成為對國家社會有益的「士大夫」。"
+                    }
                 }
             ]
         },
@@ -269,13 +319,23 @@
                     "text": ">> 繼承身世：富貴而無名 (廉恥 < 40)",
                     "req": { "stat": "integrity", "op": "<", "val": 40 },
                     "effects": { "power": 80, "integrity": 20, "family": 100 },
-                    "nextScene": "ch5_rich_intro"
+                    "nextScene": "ch5_rich_intro",
+                    "analysis": {
+                        "status": "info",
+                        "title": "繼承：富貴之家",
+                        "content": "因為先祖的鑽營，你出生在富貴之家，但也繼承了較低的道德起點。你將面臨更艱難的誘惑。"
+                    }
                 },
                 {
                     "text": ">> 繼承身世：清貧而有節 (廉恥 >= 40)",
                     "req": { "stat": "integrity", "op": ">=", "val": 40 },
                     "effects": { "power": 20, "integrity": 80, "family": 60 },
-                    "nextScene": "ch5_poor_intro"
+                    "nextScene": "ch5_poor_intro",
+                    "analysis": {
+                        "status": "info",
+                        "title": "繼承：清白之家",
+                        "content": "因為先祖的堅持，你出生在書香門第，雖然清貧，但你擁有極高的道德起點與社會聲望。"
+                    }
                 }
             ]
         },
@@ -335,12 +395,22 @@
                 {
                     "text": "A. 忍辱剃髮：為了家族存續，暫且忍耐，留有用之身。",
                     "effects": { "power": 10, "integrity": -20, "family": 20 },
-                    "nextScene": "ch6_res_shave"
+                    "nextScene": "ch6_res_shave",
+                    "analysis": {
+                        "status": "info",
+                        "title": "忍辱負重",
+                        "content": "你選擇了屈服於異族統治。這在當時被視為喪失民族氣節，但在現實生存壓力下，這是許多人的無奈選擇。"
+                    }
                 },
                 {
                     "text": "B. 斷髮抗爭：逃入深山，蓄髮明志，絕不臣服異族！",
                     "effects": { "power": -20, "integrity": 30, "family": -10 },
-                    "nextScene": "ch6_res_flee"
+                    "nextScene": "ch6_res_flee",
+                    "analysis": {
+                        "status": "success",
+                        "title": "不食周粟",
+                        "content": "你選擇了抵抗。這展現了強烈的民族氣節，如同伯夷叔齊不食周粟，維護了「身體髮膚受之父母」的傳統價值。"
+                    }
                 }
             ]
         },
@@ -377,12 +447,22 @@
                 {
                     "text": "A. 應召出仕：利用職權修書修史，保存漢家文化。",
                     "effects": { "power": 30, "integrity": -10, "family": 10 },
-                    "nextScene": "ch7_res_accept"
+                    "nextScene": "ch7_res_accept",
+                    "analysis": {
+                        "status": "info",
+                        "title": "曲線救國",
+                        "content": "你選擇了出仕。這是一個充滿爭議的選擇。有人認為這是變節，也有人認為這是為了保存文化火種的無奈之舉。"
+                    }
                 },
                 {
                     "text": "B. 堅拒不就：自稱老病，誓死不食周粟。",
                     "effects": { "power": -30, "integrity": 30, "family": -10 },
-                    "nextScene": "ch7_res_reject"
+                    "nextScene": "ch7_res_reject",
+                    "analysis": {
+                        "status": "success",
+                        "title": "勿事異姓",
+                        "content": "你堅持了顧炎武「勿事異姓」的遺訓。雖然生活清苦，但你守住了士大夫的晚節，展現了「無恥之恥，無恥矣」的覺悟。"
+                    }
                 }
             ]
         },
@@ -419,12 +499,22 @@
                 {
                     "text": "A. 燒毀書稿：為了保全家族，毀掉一生的心血。",
                     "effects": { "power": 10, "integrity": -10, "family": 30 },
-                    "nextScene": "ch8_res_burn"
+                    "nextScene": "ch8_res_burn",
+                    "analysis": {
+                        "status": "info",
+                        "title": "斷尾求生",
+                        "content": "為了保全家族，你犧牲了真理。這是一個令人心碎的選擇，顯示了在極權之下，個人的氣節往往需要付出慘痛的代價。"
+                    }
                 },
                 {
                     "text": "B. 藏匿書稿：真理不該被掩蓋，冒死託付給信任的學生。",
                     "effects": { "power": -20, "integrity": 40, "family": -20 },
-                    "nextScene": "ch8_res_hide"
+                    "nextScene": "ch8_res_hide",
+                    "analysis": {
+                        "status": "success",
+                        "title": "松柏後凋",
+                        "content": "你選擇了守護真理。正如顧炎武所言「松柏後凋於歲寒」，在最黑暗的時刻，你沒有讓思想的火種熄滅。"
+                    }
                 }
             ]
         },
