@@ -319,6 +319,7 @@
                 {
                     "text": ">> 繼承身世：富貴而無名 (廉恥 < 40)",
                     "req": { "stat": "integrity", "op": "<", "val": 40 },
+                    "isReset": true,
                     "effects": { "power": 80, "integrity": 20, "family": 100 },
                     "nextScene": "ch5_rich_intro",
                     "analysis": {
@@ -330,6 +331,7 @@
                 {
                     "text": ">> 繼承身世：清貧而有節 (廉恥 >= 40)",
                     "req": { "stat": "integrity", "op": ">=", "val": 40 },
+                    "isReset": true,
                     "effects": { "power": 20, "integrity": 80, "family": 60 },
                     "nextScene": "ch5_poor_intro",
                     "analysis": {

@@ -243,7 +243,7 @@ function makeChoice(choice) {
 
     if (choice.effects) {
         for (const [key, value] of Object.entries(choice.effects)) {
-            if (choice.nextScene.includes('ch5_') && value > 0) {
+            if (choice.isReset) {
                  gameState.stats[key] = value; 
             } else {
                  gameState.stats[key] += value; 

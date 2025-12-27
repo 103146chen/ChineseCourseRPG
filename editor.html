@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG 劇情視覺化編輯器 (進階版)</title>
+    <style>
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-panel: #252526;
+            --accent: #d4af37;
+            --text: #ddd;
+            --border: #3e3e42;
+            --input-bg: #3c3c3c;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --info: #3498db;
+        }
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* 左側導航 */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 15px;
+            background: #333;
+            font-weight: bold;
+            color: var(--accent);
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-tabs {
+            display: flex;
+            background: #2d2d2d;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: 0.9rem;
+        }
+        .nav-tab.active {
+            border-bottom-color: var(--accent);
+            color: #fff;
+            background: #3e3e42;
+        }
+        .list-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .list-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-item:hover { background: #333; }
+        .list-item.active { background: #37373d; border-left: 3px solid var(--accent); }
+        .list-item .tag { font-size: 0.75rem; background: #555; padding: 2px 6px; border-radius: 4px; }
+
+        /* 右側編輯區 */
+        .main-editor {
+            flex-grow: 1;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .editor-toolbar {
+            padding: 10px 20px;
+            background: #333;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .editor-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* 表單元件 */
+        h3 { color: var(--accent); border-bottom: 1px solid #444; padding-bottom: 5px; margin-top: 25px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #aaa; }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            background: var(--input-bg);
+            border: 1px solid #555;
+            color: #fff;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        textarea { resize: vertical; min-height: 60px; }
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; }
+        
+        /* 特殊樣式：禁止編輯 */
+        input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-color: #555;
+            background: #2a2a2a;
+            color: #888;
+        }
+        
+        /* 按鈕樣式 */
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        button.primary { background: var(--accent); color: #000; }
+        button.primary:hover { background: #f1c40f; }
+        button.danger { background: var(--danger); color: #fff; }
+        button.success { background: var(--success); color: #fff; }
+        button.outline { background: transparent; border: 1px solid #666; color: #ccc; }
+        button.outline:hover { border-color: #aaa; color: #fff; }
+        button.sm { padding: 4px 8px; font-size: 0.8rem; }
+
+        /* 卡片容器 */
+        .card-box {
+            background: #2d2d30;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            position: relative;
+        }
+        .card-header-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        /* 隱藏 */
+        .hidden { display: none !important; }
+        
+        /* 數值編輯網格 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .stat-input-group {
+            display: flex;
+            align-items: center;
+            background: #222;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+        .stat-input-group label { margin: 0; flex-grow: 1; color: #ddd; }
+        .stat-input-group input { width: 80px; text-align: right; }
+
+        /* === Toggle Switch 開關樣式 === */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .toggle-switch input { 
+            opacity: 0; 
+            width: 0; 
+            height: 0; 
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #555; /* 預設：累加模式 (灰色) */
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        /* 當被勾選時 (重置模式) */
+        input:checked + .slider {
+            background-color: #e74c3c; /* 警告色 (紅色) */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px); /* 滑動效果 */
+        }
+
+        /* 狀態文字容器 */
+        .mode-label-box {
+            display: flex; 
+            align-items: center; 
+            background: #2a2a2a; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            border: 1px solid #444;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        /* 當切換到重置模式時，外框也變紅提醒 */
+        .mode-label-box.danger-mode {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            RPG Story Editor
+            <div style="font-size: 0.8rem; color: #888; font-weight: normal;">教學專用版 v2.2</div>
+        </div>
+        
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('scenes')">場景 (Scenes)</div>
+            <div class="nav-tab" onclick="switchTab('endings')">結局 (Endings)</div>
+            <div class="nav-tab" onclick="switchTab('config')">設定 (Config)</div>
+        </div>
+
+        <div id="list-scenes" class="list-container">
+            <div style="padding:10px;"><button class="outline" style="width:100%" onclick="addNewScene()">+ 新增場景</button></div>
+            <div id="scene-list-ul"></div>
+        </div>
+        
+        <div id="list-endings" class="list-container hidden">
+            <div style="padding:10px;"><button class="outline" style="width:100%" onclick="addNewEnding()">+ 新增結局</button></div>
+            <div id="ending-list-ul"></div>
+        </div>
+
+        <div id="list-config" class="list-container hidden">
+            <div style="padding: 20px; text-align: center; color: #888;">
+                請直接在右側編輯全域設定
+            </div>
+        </div>
+
+        <div style="padding: 10px; border-top: 1px solid #444; background: #222;">
+            <button class="primary" style="width: 100%; margin-bottom: 5px;" onclick="exportJSON()">💾 下載 story.json</button>
+            <input type="file" id="import-file" style="display: none" onchange="importJSON(this)">
+            <button class="outline" style="width: 100%" onclick="document.getElementById('import-file').click()">📂 匯入舊檔</button>
+        </div>
+    </div>
+
+    <div class="main-editor">
+        <div class="editor-toolbar">
+            <span id="editor-title" style="font-size: 1.2rem; font-weight: bold; color: var(--accent);">準備就緒</span>
+            <button id="btn-delete" class="danger hidden" onclick="deleteCurrentItem()">刪除此項目</button>
+        </div>
+
+        <div id="editor-content-area" class="editor-content">
+            <div style="text-align: center; margin-top: 100px; color: #666;">
+                請從左側選擇項目開始編輯，或點擊「匯入舊檔」載入 story.json
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === 資料結構 ===
+        let storyData = {
+            config: {
+                title: "未命名故事",
+                stats: [
+                    { id: "hp", name: "生命值", init: 100, color: "#e74c3c" }
+                ]
+            },
+            scenes: {
+                "intro": {
+                    bg: "", bgm: "", dialogues: ["歡迎來到這個故事。"], choices: []
+                }
+            },
+            endings: []
+        };
+
+        let currentTab = 'scenes';
+        let currentId = 'intro';
+
+        function init() { renderList(); }
+
+        // === 介面切換邏輯 ===
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('list-scenes').classList.add('hidden');
+            document.getElementById('list-endings').classList.add('hidden');
+            document.getElementById('list-config').classList.add('hidden');
+            
+            document.getElementById(`list-${tab}`).classList.remove('hidden');
+
+            if (tab === 'config') renderConfigEditor();
+            else renderList();
+        }
+
+        // === 渲染列表 ===
+        function renderList() {
+            const container = currentTab === 'scenes' ? document.getElementById('scene-list-ul') : document.getElementById('ending-list-ul');
+            container.innerHTML = '';
+
+            if (currentTab === 'scenes') {
+                Object.keys(storyData.scenes).forEach(key => {
+                    const div = document.createElement('div');
+                    div.className = `list-item ${currentId === key ? 'active' : ''}`;
+                    div.innerText = key;
+                    div.onclick = () => { currentId = key; renderList(); renderSceneEditor(key); };
+                    container.appendChild(div);
+                });
+            } else if (currentTab === 'endings') {
+                storyData.endings.forEach((ending, index) => {
+                    const div = document.createElement('div');
+                    div.className = `list-item ${currentId === index ? 'active' : ''}`;
+                    div.innerHTML = `<span>${ending.title || '未命名結局'}</span> <span class="tag">P:${ending.priority||0}</span>`;
+                    div.onclick = () => { currentId = index; renderList(); renderEndingEditor(index); };
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // ==========================================================
+        //  編輯器渲染 (核心邏輯)
+        // ==========================================================
+
+        // 1. 設定 (Config)
+        function renderConfigEditor() {
+            const container = document.getElementById('editor-content-area');
+            document.getElementById('editor-title').innerText = "全域設定 (Config)";
+            document.getElementById('btn-delete').classList.add('hidden');
+
+            container.innerHTML = `
+                <div class="form-group">
+                    <label>故事標題 (Title)</label>
+                    <input type="text" value="${storyData.config.title || ''}" oninput="storyData.config.title = this.value">
+                </div>
+                
+                <h3>玩家數值定義 (Stats)</h3>
+                <p style="font-size:0.8rem; color:#888;">定義遊戲中會用到的變數，ID 只能為英文與數字。</p>
+                <div id="stats-config-list"></div>
+                <button class="outline sm" onclick="addStatConfig()">+ 新增數值</button>
+            `;
+            renderStatConfigList();
+        }
+
+        function renderStatConfigList() {
+            const list = document.getElementById('stats-config-list');
+            list.innerHTML = '';
+            (storyData.config.stats || []).forEach((stat, idx) => {
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.style.marginBottom = '10px';
+                row.innerHTML = `
+                    <div class="col">
+                        <input placeholder="ID (限英文)" value="${stat.id}" 
+                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9_]/g, ''); updateStatConfig(${idx}, 'id', this.value)">
+                    </div>
+                    <div class="col"><input placeholder="顯示名稱" value="${stat.name}" oninput="updateStatConfig(${idx}, 'name', this.value)"></div>
+                    <div class="col" style="flex:0.5"><input type="number" placeholder="初始值" value="${stat.init}" oninput="updateStatConfig(${idx}, 'init', parseInt(this.value))"></div>
+                    <div class="col" style="flex:0.5"><input type="color" value="${stat.color}" oninput="updateStatConfig(${idx}, 'color', this.value)" style="height:35px; padding:0;"></div>
+                    <button class="danger sm" onclick="removeStatConfig(${idx})">×</button>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        // 2. 場景 (Scene)
+        function renderSceneEditor(sceneId) {
+            const scene = storyData.scenes[sceneId];
+            const container = document.getElementById('editor-content-area');
+            document.getElementById('editor-title').innerText = `編輯場景: ${sceneId}`;
+            
+            // 【修改重點 1】如果是 intro，隱藏刪除按鈕
+            if (sceneId === 'intro') {
+                document.getElementById('btn-delete').classList.add('hidden');
+            } else {
+                document.getElementById('btn-delete').classList.remove('hidden');
+            }
+
+            // 【修改重點 2】如果是 intro，ID 輸入框設為 disabled
+            const disabledAttr = (sceneId === 'intro') ? 'disabled title="起始場景 ID 不可變更"' : '';
+            const idInputStyle = (sceneId === 'intro') ? 'border-color: #d4af37;' : '';
+
+            container.innerHTML = `
+                <div class="form-group">
+                    <label>場景 ID ${sceneId === 'intro' ? '(起始場景不可更名)' : '(更改後會自動更新參照)'}</label>
+                    <input type="text" value="${sceneId}" style="${idInputStyle}" ${disabledAttr} onchange="renameScene('${sceneId}', this.value)">
+                </div>
+
+                <div class="row">
+                    <div class="col form-group">
+                        <label>背景圖 (images/...)</label>
+                        <input type="text" value="${scene.bg || ''}" oninput="updateSceneData('${sceneId}', 'bg', this.value)">
+                    </div>
+                    <div class="col form-group">
+                        <label>背景音樂 (audio/...)</label>
+                        <input type="text" value="${scene.bgm || ''}" oninput="updateSceneData('${sceneId}', 'bgm', this.value)">
+                    </div>
+                    <div class="col form-group">
+                        <label>視覺特效 (fx)</label>
+                        <select onchange="updateSceneData('${sceneId}', 'fx', this.value)">
+                            <option value="" ${!scene.fx ? 'selected':''}>無</option>
+                            <option value="shake" ${scene.fx==='shake'?'selected':''}>震動 (shake)</option>
+                            <option value="flash-red" ${scene.fx==='flash-red'?'selected':''}>紅閃 (受傷)</option>
+                            <option value="flash-white" ${scene.fx==='flash-white'?'selected':''}>白閃 (回憶)</option>
+                            <option value="blur" ${scene.fx==='blur'?'selected':''}>模糊</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>對話內容 (一行一句，支援 &lt;b&gt;HTML&lt;/b&gt;)</label>
+                    <textarea style="height: 150px;" oninput="updateDialogues('${sceneId}', this.value)">${(scene.dialogues || []).join('\n')}</textarea>
+                </div>
+
+                <h3>抉擇選項 (Choices)</h3>
+                <div id="choices-list"></div>
+                <button class="primary" style="width:100%" onclick="addChoice('${sceneId}')">+ 新增選項</button>
+            `;
+            
+            renderChoices(sceneId);
+        }
+
+        function renderChoices(sceneId) {
+            const container = document.getElementById('choices-list');
+            container.innerHTML = '';
+            const scene = storyData.scenes[sceneId];
+            const allScenes = Object.keys(storyData.scenes);
+
+            (scene.choices || []).forEach((choice, idx) => {
+                const box = document.createElement('div');
+                box.className = 'card-box';
+                
+                const reqStat = choice.req ? choice.req.stat : '';
+                const reqOp = choice.req ? choice.req.op : '>';
+                const reqVal = choice.req ? choice.req.val : 0;
+                
+                const isReset = choice.isReset === true;
+
+                // 解析 effects UI
+                let effectsHTML = `<div class="stats-grid">`;
+                storyData.config.stats.forEach(stat => {
+                    const val = (choice.effects && choice.effects[stat.id] !== undefined) ? choice.effects[stat.id] : 0;
+                    
+                    // 根據是否勾選重置，改變提示文字
+                    const placeholder = isReset ? '設定為 (直接覆蓋)' : '累加 (輸入正負數)';
+                    const labelSign = isReset ? '(=)' : '(+)';
+                    
+                    effectsHTML += `
+                        <div class="stat-input-group">
+                            <label>${stat.name} <span style="color:${isReset?'#e74c3c':'#aaa'}">${labelSign}</span></label>
+                            <input type="number" placeholder="${placeholder}" value="${val}" onchange="updateChoiceEffect('${sceneId}', ${idx}, '${stat.id}', this.value)">
+                        </div>`;
+                });
+                effectsHTML += `</div>`;
+
+                // 智慧下拉選單
+                let sceneOptionsHTML = `<option value="end_calc" style="color:#d4af37; font-weight:bold;">🏁 觸發結局計算 (end_calc)</option>`;
+                let foundCurrent = (choice.nextScene === 'end_calc');
+                allScenes.forEach(sKey => {
+                    const selected = (sKey === choice.nextScene) ? 'selected' : '';
+                    if (selected) foundCurrent = true;
+                    sceneOptionsHTML += `<option value="${sKey}" ${selected}>${sKey}</option>`;
+                });
+                if (!foundCurrent && choice.nextScene) {
+                        sceneOptionsHTML += `<option value="${choice.nextScene}" selected style="color:#e74c3c;">⚠️ 未知/已刪除: ${choice.nextScene}</option>`;
+                }
+
+                box.innerHTML = `
+                    <div class="card-header-actions">
+                        <button class="danger sm" onclick="removeChoice('${sceneId}', ${idx})">刪除</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>按鈕文字</label>
+                        <input type="text" value="${choice.text}" oninput="updateChoiceProp('${sceneId}', ${idx}, 'text', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>跳轉目標</label>
+                        <select style="font-family: monospace;" onchange="updateChoiceProp('${sceneId}', ${idx}, 'nextScene', this.value);">
+                            ${sceneOptionsHTML}
+                        </select>
+                    </div>
+
+                    <details id="details-${sceneId}-${idx}">
+                        <summary style="cursor:pointer; color:var(--accent); margin:10px 0;">數值變動 (Effects)</summary>
+                        
+                        <div style="margin-bottom: 10px; background: ${isReset ? 'rgba(231, 76, 60, 0.1)' : '#252526'}; padding: 12px; border-radius: 6px; border: 1px solid ${isReset ? '#e74c3c' : '#444'}; display:flex; align-items:center; transition: all 0.3s;">
+                            
+                            <label class="t-switch">
+                                <input type="checkbox" ${isReset ? 'checked' : ''} 
+                                    onchange="updateChoiceProp('${sceneId}', ${idx}, 'isReset', this.checked); renderChoices('${sceneId}'); document.getElementById('details-${sceneId}-${idx}').open = true;">
+                                <span class="t-slider"></span>
+                            </label>
+
+                            <div style="flex-grow:1;">
+                                <label style="margin:0; cursor:pointer; font-weight:bold; display:block; color:${isReset ? '#e74c3c' : '#aaa'}; font-size: 0.95rem;">
+                                    ${isReset ? '⚠️ 強制重置 (Reset)' : '➕ 數值累加 (Accumulate)'}
+                                </label>
+                                <div style="font-size: 0.8rem; color: #777; margin-top: 4px;">
+                                    ${isReset ? '警告：此選項將直接「覆蓋」並取代玩家原本的數值。' : '標準模式：在現有數值上進行加減運算。'}
+                                </div>
+                            </div>
+                        </div>
+
+                        ${effectsHTML}
+                    </details>
+
+                    <details>
+                        <summary style="cursor:pointer; color:var(--accent); margin:10px 0;">出現條件 (Requirements)</summary>
+                        <div class="row" style="align-items:center; background:#222; padding:10px;">
+                            <select style="flex:1" onchange="updateChoiceReq('${sceneId}', ${idx}, 'stat', this.value)">
+                                <option value="">無條件</option>
+                                ${storyData.config.stats.map(s => `<option value="${s.id}" ${reqStat===s.id?'selected':''}>${s.name}</option>`).join('')}
+                            </select>
+                            <select style="flex:0.5" onchange="updateChoiceReq('${sceneId}', ${idx}, 'op', this.value)">
+                                <option value=">" ${reqOp==='>'?'selected':''}> &gt; </option>
+                                <option value=">=" ${reqOp==='>='?'selected':''}> &ge; </option>
+                                <option value="<" ${reqOp==='<'?'selected':''}> &lt; </option>
+                                <option value="<=" ${reqOp==='<='?'selected':''}> &le; </option>
+                                <option value="==" ${reqOp==='=='?'selected':''}> = </option>
+                            </select>
+                            <input type="number" style="flex:0.5" value="${reqVal}" onchange="updateChoiceReq('${sceneId}', ${idx}, 'val', this.value)">
+                        </div>
+                    </details>
+                    
+                    <details>
+                        <summary style="cursor:pointer; color:var(--accent); margin:10px 0;">解析回顧 (Analysis)</summary>
+                        <div style="background:#222; padding:10px;">
+                            <div class="row form-group">
+                                <div class="col"><label>標題</label><input value="${choice.analysis?.title||''}" oninput="updateChoiceAnalysis('${sceneId}', ${idx}, 'title', this.value)"></div>
+                                <div class="col" style="flex:0.5">
+                                    <label>狀態</label>
+                                    <select onchange="updateChoiceAnalysis('${sceneId}', ${idx}, 'status', this.value)">
+                                        <option value="info" ${choice.analysis?.status==='info'?'selected':''}>一般</option>
+                                        <option value="success" ${choice.analysis?.status==='success'?'selected':''}>符合</option>
+                                        <option value="warning" ${choice.analysis?.status==='warning'?'selected':''}>背離</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>解析內容</label><textarea style="min-height:50px" oninput="updateChoiceAnalysis('${sceneId}', ${idx}, 'content', this.value)">${choice.analysis?.content||''}</textarea></div>
+                        </div>
+                    </details>
+                `;
+                container.appendChild(box);
+            });
+        }
+
+        // 3. 結局 (Ending)
+        function renderEndingEditor(index) {
+            const ending = storyData.endings[index];
+            const container = document.getElementById('editor-content-area');
+            document.getElementById('editor-title').innerText = `編輯結局: ${ending.title || 'Untitled'}`;
+            document.getElementById('btn-delete').classList.remove('hidden');
+
+            let conditionsHTML = `<div id="cond-list">`;
+            (ending.conditions || []).forEach((cond, cIdx) => {
+                conditionsHTML += `
+                    <div class="row" style="margin-bottom:5px;">
+                        <select onchange="updateEndingCond(${index}, ${cIdx}, 'stat', this.value)">
+                            ${storyData.config.stats.map(s => `<option value="${s.id}" ${cond.stat===s.id?'selected':''}>${s.name}</option>`).join('')}
+                        </select>
+                        <select style="width:60px" onchange="updateEndingCond(${index}, ${cIdx}, 'op', this.value)">
+                            <option value=">=" ${cond.op==='>='?'selected':''}>&ge;</option>
+                            <option value="<=" ${cond.op==='<='?'selected':''}>&le;</option>
+                            <option value="==" ${cond.op==='=='?'selected':''}>=</option>
+                            <option value=">" ${cond.op==='>'?'selected':''}>&gt;</option>
+                            <option value="<" ${cond.op==='<'?'selected':''}>&lt;</option>
+                        </select>
+                        <input type="number" value="${cond.val}" onchange="updateEndingCond(${index}, ${cIdx}, 'val', this.value)">
+                        <button class="danger sm" onclick="removeEndingCond(${index}, ${cIdx})">×</button>
+                    </div>`;
+            });
+            conditionsHTML += `</div><button class="outline sm" onclick="addEndingCond(${index})">+ 增加條件</button>`;
+
+            container.innerHTML = `
+                <div class="row">
+                    <div class="col form-group">
+                        <label>結局 ID (Unique)</label>
+                        <input type="text" value="${ending.id}" oninput="updateEndingProp(${index}, 'id', this.value)">
+                    </div>
+                    <div class="col form-group">
+                        <label>優先權 (Priority) - 數字越大越先判斷</label>
+                        <input type="number" value="${ending.priority}" oninput="updateEndingProp(${index}, 'priority', parseInt(this.value))">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>結局標題</label>
+                    <input type="text" value="${ending.title}" oninput="updateEndingProp(${index}, 'title', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>結局圖片</label>
+                    <input type="text" value="${ending.image}" oninput="updateEndingProp(${index}, 'image', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>描述文字</label>
+                    <textarea oninput="updateEndingProp(${index}, 'desc', this.value)">${ending.desc}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>名言引用</label>
+                    <input type="text" value="${ending.quote||''}" oninput="updateEndingProp(${index}, 'quote', this.value)">
+                </div>
+                <div class="card-box">
+                    <label>觸發條件 (所有條件皆符合才觸發)</label>
+                    ${conditionsHTML}
+                </div>
+            `;
+        }
+
+        // ==========================================================
+        //  資料更新操作
+        // ==========================================================
+        
+        function updateStatConfig(idx, field, val) { storyData.config.stats[idx][field] = val; }
+        function addStatConfig() { storyData.config.stats.push({id:'new', name:'新數值', init:0, color:'#ffffff'}); renderStatConfigList(); }
+        function removeStatConfig(idx) { storyData.config.stats.splice(idx, 1); renderStatConfigList(); }
+
+        function updateSceneData(id, field, val) { storyData.scenes[id][field] = val; }
+        function updateDialogues(id, val) { storyData.scenes[id].dialogues = val.split('\n').filter(l=>l); }
+        function renameScene(oldId, newId) {
+            if(!newId || storyData.scenes[newId]) return;
+            storyData.scenes[newId] = storyData.scenes[oldId];
+            delete storyData.scenes[oldId];
+            
+            Object.values(storyData.scenes).forEach(s => {
+                (s.choices||[]).forEach(c => { if(c.nextScene === oldId) c.nextScene = newId; });
+            });
+
+            currentId = newId;
+            renderList();
+            renderSceneEditor(newId);
+        }
+        function addNewScene() {
+            const id = 'scene_' + Math.floor(Math.random()*1000);
+            storyData.scenes[id] = { dialogues:["..."], choices:[] };
+            currentId = id;
+            renderList();
+            renderSceneEditor(id);
+        }
+        
+        function deleteCurrentItem() {
+            if(currentTab === 'scenes' && currentId === 'intro') {
+                alert("❌ 無法刪除 'intro' 場景！\n這是故事的起始點，必須保留。");
+                return;
+            }
+
+            if(!confirm("確定刪除？")) return;
+            if(currentTab==='scenes') {
+                delete storyData.scenes[currentId];
+                currentId = Object.keys(storyData.scenes)[0] || '';
+            } else {
+                storyData.endings.splice(currentId, 1);
+                currentId = 0;
+            }
+            renderList();
+            document.getElementById('editor-content-area').innerHTML = '';
+        }
+
+        function addChoice(sceneId) {
+            if(!storyData.scenes[sceneId].choices) storyData.scenes[sceneId].choices = [];
+            storyData.scenes[sceneId].choices.push({ text:"新選項", nextScene:sceneId, effects:{} });
+            renderChoices(sceneId);
+        }
+        function removeChoice(sceneId, idx) {
+            storyData.scenes[sceneId].choices.splice(idx, 1);
+            renderChoices(sceneId);
+        }
+        function updateChoiceProp(sId, cIdx, field, val) { storyData.scenes[sId].choices[cIdx][field] = val; }
+        function updateChoiceEffect(sId, cIdx, statId, val) {
+            val = parseInt(val);
+            if(val === 0) delete storyData.scenes[sId].choices[cIdx].effects[statId];
+            else storyData.scenes[sId].choices[cIdx].effects[statId] = val;
+        }
+        function updateChoiceReq(sId, cIdx, field, val) {
+            if(!storyData.scenes[sId].choices[cIdx].req) storyData.scenes[sId].choices[cIdx].req = { stat:storyData.config.stats[0]?.id, op:'>', val:0 };
+            
+            if (field === 'stat' && val === "") {
+                delete storyData.scenes[sId].choices[cIdx].req; 
+            } else {
+                storyData.scenes[sId].choices[cIdx].req[field] = (field==='val') ? parseInt(val) : val;
+            }
+            if(field === 'stat') renderChoices(sId); 
+        }
+        function updateChoiceAnalysis(sId, cIdx, field, val) {
+            if(!storyData.scenes[sId].choices[cIdx].analysis) storyData.scenes[sId].choices[cIdx].analysis = { status:'info', title:'', content:'' };
+            storyData.scenes[sId].choices[cIdx].analysis[field] = val;
+        }
+
+        function addNewEnding() {
+            storyData.endings.push({ id:'end_'+Date.now(), title:'新結局', priority:10, conditions:[] });
+            currentId = storyData.endings.length-1;
+            renderList();
+            renderEndingEditor(currentId);
+        }
+        function updateEndingProp(idx, field, val) { storyData.endings[idx][field] = val; if(field==='title') renderList(); }
+        function addEndingCond(idx) { 
+            storyData.endings[idx].conditions.push({ stat:storyData.config.stats[0]?.id, op:'>=', val:0 });
+            renderEndingEditor(idx);
+        }
+        function removeEndingCond(idx, cIdx) {
+            storyData.endings[idx].conditions.splice(cIdx, 1);
+            renderEndingEditor(idx);
+        }
+        function updateEndingCond(idx, cIdx, field, val) {
+            storyData.endings[idx].conditions[cIdx][field] = (field==='val')?parseInt(val):val;
+        }
+
+        function exportJSON() {
+            const blob = new Blob([JSON.stringify(storyData, null, 4)], {type:"application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'story.json';
+            a.click();
+        }
+        function importJSON(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    storyData = JSON.parse(e.target.result);
+                    if(!storyData.scenes) storyData.scenes = {};
+                    if(!storyData.endings) storyData.endings = [];
+                    if(!storyData.config) storyData.config = { stats: [] };
+                    alert("匯入成功！");
+                    currentTab = 'scenes';
+                    renderList();
+                    document.getElementById('editor-content-area').innerHTML = '';
+                } catch(err) { alert("格式錯誤"); }
+            };
+            reader.readAsText(file);
+        }
+
+        init();
+    </script>
+</body>
+</html>
