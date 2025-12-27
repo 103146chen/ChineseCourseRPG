@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPG Engine</title>
     <link rel="stylesheet" href="assets/css/style.css"> 
+    <link rel="stylesheet" href="assets/css/exportHTML.css"> 
+    <link rel="stylesheet" href="assets/css/FxVisualOverlay.css"> 
+    <link rel="stylesheet" href="assets/css/baccklog.css"> 
+    <link rel="stylesheet" href="assets/css/debugMode.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -13,7 +17,20 @@
 
     <div class="game-window">
         <div id="game-bg" class="background-layer"></div>
+        <div id="fx-overlay" class="fx-layer"></div>
+        <button id="backlog-btn" class="control-btn" onclick="toggleBacklog()" style="position: fixed; bottom: 10px; top: unset;">📖 紀錄</button>
+        <div id="backlog-overlay" class="hidden">
+            <div class="backlog-container">
+                <div class="backlog-header">
+                    <span>📜 對話歷史紀錄</span>
+                    <button class="close-btn" onclick="toggleBacklog()" style="margin: 0px; width: 32px; height: 32px; padding: 10px;">✕</button>
+                </div>
+                <div id="backlog-content" class="backlog-content">
+                    </div>
+            </div>
+        </div>
         <div class="stats-overlay"><div id="stats-container"></div></div>
+        <div id="global-tooltip" class="global-tooltip hidden"></div>
         <div class="dialogue-container">
             <div id="story-text" class="dialogue-text">載入中...</div>
             <div id="next-indicator" class="next-arrow">▼ 點擊繼續</div>
@@ -29,7 +46,8 @@
                 
                 <div class="ending-actions">
                     <button class="choice-btn" onclick="showReview()">📜 查看我的抉擇分析</button>
-                    <button class="choice-btn restart-btn" onclick="location.reload()">🔄 重新輪迴</button>
+                    <button class="choice-btn" onclick="printPortfolio()">🖨️ 列印學習單</button>
+                    <button class="choice-btn" onclick="location.reload()">🔄 重新輪迴</button>
                 </div>
 
                 <div id="review-container" class="review-box hidden">
@@ -41,6 +59,53 @@
         </div>
     </div>
 
-    <script src="assets/js/script.js"></script> 
+    <div id="print-area" class="print-only">
+        <div class="print-container">
+            <header class="print-header">
+                <div class="school-name">互動式歷史情境教學</div>
+                <h1 class="document-title">【士大夫的抉擇】個人學習歷程檔案</h1>
+                
+                <div class="student-info-grid">
+                    <div class="info-item">班級：__________</div>
+                    <div class="info-item">座號：__________</div>
+                    <div class="info-item">姓名：__________</div>
+                    <div class="info-item">遊玩日期：<span id="print-date"></span></div>
+                </div>
+            </header>
+
+            <section class="print-section summary-section">
+                <h2 class="section-title">壹、 命運的終章</h2>
+                <div class="ending-box">
+                    <h3 id="print-ending-title">（結局載入中...）</h3>
+                    <p id="print-ending-desc" class="ending-desc"></p>
+                    <div id="print-ending-quote" class="ending-quote"></div>
+                </div>
+                
+                <div class="stats-summary">
+                    <h4>📊 最終人格特質數值：</h4>
+                    <div id="print-stats-container" class="stats-grid">
+                        </div>
+                </div>
+            </section>
+
+            <section class="print-section history-section">
+                <h2 class="section-title">貳、 抉擇與省思</h2>
+                <p class="instruction-text">說明：以下是你經歷的關鍵轉折點。請回顧你的選擇，並在空白處寫下你的想法。</p>
+                
+                <div id="print-history-list" class="history-list">
+                    </div>
+            </section>
+
+            <footer class="print-footer">
+                <div class="sign-box">
+                    <p>學生自評：__________________</p>
+                    <p>教師評量：__________________</p>
+                </div>
+                <div class="page-number">Designed by RPG Engine</div>
+            </footer>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/script.js"></script>
 </body>
 </html>

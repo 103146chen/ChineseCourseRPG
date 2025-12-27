@@ -346,6 +346,43 @@ body {
 .close-btn:hover { background: #666; }
 
 /* =========================================
+   難詞註釋系統
+   ========================================= */
+
+/* 1. 文字本身的樣式 (加上底線和顏色) */
+.glossary {
+    border-bottom: 2px dotted var(--accent-color);
+    cursor: help;
+    color: #ffd700;
+    transition: all 0.2s;
+    position: relative;
+    display: inline-block; /* 確保感應區域正確 */
+}
+
+.glossary:hover {
+    background-color: rgba(212, 175, 55, 0.2); /* 滑鼠移上去稍微變亮 */
+    color: #fff;
+}
+
+/* 2. 全域浮動提示框 (獨立於對話框之外，不會被截斷) */
+.global-tooltip {
+    position: fixed; /* 關鍵：固定在視窗上，不受父容器 overflow 影響 */
+    background: rgba(20, 20, 20, 0.95);
+    color: #fff;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: 1px solid var(--accent-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 250px;
+    z-index: 9999; /* 確保在最上層 */
+    pointer-events: none; /* 讓滑鼠不會點到提示框本身 */
+    white-space: normal; /* 允許換行 */
+    backdrop-filter: blur(4px);
+}
+
+/* =========================================
    RWD 手機版適配 (螢幕寬度小於 768px)
    ========================================= */
 @media (max-width: 768px) {
@@ -388,5 +425,18 @@ body {
     /* 4. 結局畫面 */
     .ending-layer {
         padding: 20px;
+    }
+
+    /* 5. 提示工具 */
+    .global-tooltip {
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 300px;
+        text-align: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.98);
+        border: 2px solid var(--accent-color);
     }
 }

@@ -1,0 +1,134 @@
+/* =========================================
+   列印專用樣式 - 典雅書卷風
+   ========================================= */
+
+.print-only { display: none; }
+
+@media print {
+    /* 1. 全域設定 */
+    @page { margin: 1cm; size: A4; } /* 設定 A4 紙張邊距 */
+    
+    body {
+        background: #fff;
+        color: #000;
+        height: auto;
+        overflow: visible;
+        font-family: "DFKai-SB", "BiauKai", "標楷體", serif; /* 強制使用書法字體 */
+        -webkit-print-color-adjust: exact; /* 強制列印背景顏色 */
+        print-color-adjust: exact;
+    }
+
+    /* 隱藏遊戲介面 */
+    .game-window, body > audio, .global-tooltip, #choices-overlay {
+        display: none !important;
+    }
+
+    .print-only { display: block; }
+
+    /* 2. 外框容器 (類似證書) */
+    .print-container {
+        border: 2px solid #555;
+        padding: 20px 30px;
+        position: relative;
+        min-height: 95vh;
+    }
+
+    /* 3. 頁眉設計 */
+    .print-header {
+        text-align: center;
+        border-bottom: 2px double #333;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+    .school-name { font-size: 0.9rem; color: #666; letter-spacing: 2px; }
+    .document-title { font-size: 1.8rem; margin: 10px 0; font-weight: bold; }
+    
+    .student-info-grid {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        font-size: 1.1rem;
+        flex-wrap: wrap;
+    }
+    .info-item { width: 45%; text-align: left; margin-bottom: 5px; }
+
+    /* 4. 通用區塊標題 */
+    .section-title {
+        background: #eee;
+        padding: 5px 10px;
+        border-left: 5px solid #333;
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    /* 5. 結局區塊 */
+    .ending-box {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #fafafa;
+    }
+    .ending-box h3 { font-size: 1.5rem; margin: 0 0 10px 0; color: #b22222; }
+    .ending-desc { margin-bottom: 10px; line-height: 1.5; }
+    .ending-quote { font-style: italic; color: #555; font-family: "MingLiU", serif; }
+
+    /* 6. 數值條區塊 */
+    .stats-grid {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        border-bottom: 1px dashed #ccc;
+        padding-bottom: 15px;
+    }
+    .print-stat-item { flex: 1; border: 1px solid #999; padding: 5px; text-align: center; font-size: 0.9rem; }
+    .print-stat-val { font-weight: bold; font-size: 1.2rem; display: block; }
+
+    /* 7. 歷史紀錄列表 */
+    .instruction-text { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
+    
+    .print-history-item {
+        border: 1px solid #000;
+        margin-bottom: 15px;
+        page-break-inside: avoid; /* 防止被切斷 */
+    }
+
+    .history-header {
+        background: #e0e0e0;
+        padding: 8px;
+        font-weight: bold;
+        border-bottom: 1px solid #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .history-body { padding: 10px; }
+    .history-row { margin-bottom: 5px; }
+    .label-tag { font-weight: bold; background: #333; color: #fff; padding: 1px 5px; font-size: 0.8rem; border-radius: 3px; margin-right: 5px; }
+    
+    /* 老師解析重點色 */
+    .analysis-text { color: #b22222; font-weight: bold; }
+
+    /* 手寫區 */
+    .handwriting-box {
+        margin-top: 10px;
+        border-top: 1px dashed #999;
+        padding-top: 5px;
+    }
+    .hw-label { font-size: 0.9rem; margin-bottom: 25px; display: block; }
+    .hw-line { border-bottom: 1px solid #ccc; height: 25px; }
+
+    /* 8. 頁尾 */
+    .print-footer {
+        margin-top: 30px;
+        border-top: 2px double #333;
+        padding-top: 10px;
+    }
+    .sign-box { display: flex; justify-content: space-between; margin-bottom: 10px; }
+    .page-number { text-align: center; font-size: 0.7rem; color: #999; }
+
+    /* #排除項目# */
+    .game-window, body > audio, .global-tooltip, #choices-overlay, .debug-panel {
+        display: none !important;
+    }
+}
