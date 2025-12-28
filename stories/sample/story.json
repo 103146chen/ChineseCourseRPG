@@ -1,0 +1,183 @@
+{
+    "config": {
+        "title": "地下室的微光 (系統測試)",
+        "stats": [
+            {
+                "id": "san",
+                "name": "理智值",
+                "init": 100,
+                "color": "#3498db"
+            }
+        ],
+        "items": [
+            {
+                "id": "flashlight",
+                "name": "手電筒",
+                "desc": "一支破舊但還能用的手電筒，可以照亮暗處。"
+            },
+            {
+                "id": "key_iron",
+                "name": "生鏽的鐵鑰匙",
+                "desc": "看起來是用來開啟地下室鐵門的。"
+            }
+        ]
+    },
+    "scenes": {
+        "intro": {
+            "bg": "images/bg_room.jpg",
+            "bgm": "audio/ambience.mp3",
+            "fx": "blur",
+            "dialogues": [
+                "頭很痛...",
+                "你醒來時，發現自己被關在一個潮濕的地下室裡。",
+                "空氣中瀰漫著霉味，遠處似乎傳來水滴落下的聲音。"
+            ],
+            "choices": [
+                {
+                    "text": "起身觀察四周",
+                    "nextScene": "main_room",
+                    "effects": { "san": -5 }
+                }
+            ]
+        },
+        "main_room": {
+            "dialogues": [
+                "房間裡只有一盞忽明忽滅的燈泡。",
+                "你的面前有一扇深鎖的<b>鐵門</b>。",
+                "角落放著一個<b>舊木箱</b>，而牆邊有一個非常<b>陰暗的洞穴</b>。"
+            ],
+            "choices": [
+                {
+                    "text": "調查舊木箱",
+                    "nextScene": "check_chest"
+                },
+                {
+                    "text": "把手伸進陰暗洞穴",
+                    "nextScene": "hole_dark",
+                    "effects": { "san": -20 },
+                    "analysis": {
+                        "status": "warning",
+                        "title": "危險行為",
+                        "content": "在未知的情況下徒手探查暗處是非常危險的，導致理智大幅下降。"
+                    }
+                },
+                {
+                    "text": "使用手電筒照亮洞穴",
+                    "nextScene": "hole_light",
+                    "reqItem": "flashlight"
+                },
+                {
+                    "text": "推開鐵門離開",
+                    "nextScene": "door_locked"
+                },
+                {
+                    "text": "使用鐵鑰匙開門",
+                    "nextScene": "door_open",
+                    "reqItem": "key_iron",
+                    "gainItems": [],
+                    "loseItems": ["key_iron"]
+                }
+            ]
+        },
+        "check_chest": {
+            "dialogues": [
+                "你打開了佈滿灰塵的木箱...",
+                "裡面雜亂地放著一些舊報紙。",
+                "等等，報紙底下好像壓著什麼東西？"
+            ],
+            "choices": [
+                {
+                    "text": "拿走手電筒",
+                    "nextScene": "main_room",
+                    "gainItems": ["flashlight"],
+                    "analysis": {
+                        "status": "success",
+                        "title": "獲得工具",
+                        "content": "成功獲得了照明工具，這對接下來的探索至關重要。"
+                    }
+                },
+                {
+                    "text": "沒什麼有用的，蓋上箱子",
+                    "nextScene": "main_room"
+                }
+            ]
+        },
+        "hole_dark": {
+            "fx": "shake",
+            "dialogues": [
+                "你試著伸手進去摸索...",
+                "突然！有什麼濕滑的東西碰了你的手一下！",
+                "你嚇得趕緊縮回手，心臟劇烈跳動。"
+            ],
+            "choices": [
+                {
+                    "text": "回到房間中央",
+                    "nextScene": "main_room"
+                }
+            ]
+        },
+        "hole_light": {
+            "dialogues": [
+                "你打開手電筒往洞裡照去...",
+                "原來只是一隻老鼠跑過去。",
+                "在洞穴深處，你看見微弱的金屬反光。"
+            ],
+            "choices": [
+                {
+                    "text": "拾取鑰匙",
+                    "nextScene": "main_room",
+                    "gainItems": ["key_iron"]
+                }
+            ]
+        },
+        "door_locked": {
+            "dialogues": [
+                "你用力推了推鐵門，紋絲不動。",
+                "鎖孔看起來雖然老舊，但沒有鑰匙是打不開的。"
+            ],
+            "choices": [
+                {
+                    "text": "返回",
+                    "nextScene": "main_room",
+                    "effects": { "san": -5 }
+                }
+            ]
+        },
+        "door_open": {
+            "dialogues": [
+                "喀擦一聲，門鎖打開了！",
+                "你推開沈重的鐵門，刺眼的陽光照射進來。",
+                "你終於自由了。"
+            ],
+            "choices": [
+                {
+                    "text": "走向光芒 (結算)",
+                    "nextScene": "end_calc"
+                }
+            ]
+        }
+    },
+    "endings": [
+        {
+            "id": "bad_insane",
+            "priority": 100,
+            "conditions": [
+                { "stat": "san", "op": "<=", "val": 0 }
+            ],
+            "title": "崩潰",
+            "desc": "你的理智已經歸零，只能在黑暗中發出無意義的嘶吼...",
+            "image": "images/bad_end.jpg"
+        },
+        {
+            "id": "good_escape",
+            "priority": 10,
+            "conditions": [
+                { "stat": "san", "op": ">", "val": 0 }
+            ],
+            "title": "成功逃脫",
+            "desc": "你成功憑藉著冷靜與觀察力逃出了地下室。",
+            "quote": "希望是黑暗中唯一的光。",
+            "image": "images/good_end.jpg"
+        }
+    ]
+}
