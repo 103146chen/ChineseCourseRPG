@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動故事設計師 (完美整合版)</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: false,
+            securityLevel: 'loose',
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                edgeLabelBackground: '#ffffff',
+                tertiaryColor: '#fff',
+                fontFamily: 'Segoe UI'
+            },
+            flowchart: {
+                useMaxWidth: false, // 禁止縮放以適應容器
+                htmlLabels: true,
+                curve: 'basis',
+                nodeSpacing: 50,    // 節點間距 (大圖優化)
+                rankSpacing: 80     // 層級間距 (大圖優化)
+            }
+        });
+        window.mermaid = mermaid;
+    </script>
+    <style>
+        /* --- 基礎設定 --- */
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f4f7f6;
+            --panel-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- 側邊欄 --- */
+        .sidebar {
+            width: 320px;
+            background: var(--panel-bg);
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .sidebar h1 {
+            font-size: 20px;
+            margin-top: 0;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%; padding: 10px; background-color: var(--primary-color); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;
+            margin-bottom: 8px; transition: background 0.2s;
+        }
+        .btn:hover { background-color: #357abd; }
+        .btn-calc { background-color: #28a745; }
+        .btn-calc:hover { background-color: #218838; }
+
+        .file-upload-wrapper { position: relative; margin-bottom: 15px; }
+        input[type="file"] { display: none; }
+        .file-label {
+            display: block; padding: 12px; background: #f0f2f5;
+            border: 2px dashed #ccc; border-radius: 8px;
+            text-align: center; cursor: pointer; color: #666; font-size: 13px;
+        }
+        .file-label:hover { border-color: var(--primary-color); color: var(--primary-color); background: #eef6fc; }
+
+        textarea {
+            flex-grow: 1; width: 100%; padding: 10px;
+            border: 1px solid #ddd; border-radius: 8px;
+            resize: none; font-family: 'Consolas', monospace; font-size: 12px; box-sizing: border-box;
+        }
+
+        /* --- 主畫布 (Infinite Canvas) --- */
+        .main-content {
+            flex-grow: 1; position: relative; background: #eef1f5; overflow: hidden; cursor: grab;
+        }
+        .main-content:active { cursor: grabbing; }
+
+        #graphContainer {
+            position: absolute; top: 0; left: 0; transform-origin: 0 0;
+            background-image: linear-gradient(#dbe3e8 1px, transparent 1px), linear-gradient(90deg, #dbe3e8 1px, transparent 1px);
+            background-size: 40px 40px;
+            width: 100000px; height: 100000px;
+            pointer-events: none;
+        }
+
+        #graphDiv {
+            display: inline-block;
+            padding: 100px;
+            pointer-events: auto;
+        }
+
+        /* ========================================= */
+        /* 強制設定 Mermaid 節點樣式 (防止文字被切) */
+        /* ========================================= */
+        #graphDiv .node foreignObject {
+            overflow: visible !important;
+        }
+        
+        #graphDiv .node foreignObject div {
+            white-space: normal !important;   /* 允許換行 */
+            word-wrap: break-word !important; /* 長單字換行 */
+            min-width: 150px !important;      /* 最小寬度 */
+            max-width: 300px !important;      /* 最大寬度 */
+            padding: 8px !important;
+            text-align: center !important;
+            line-height: 1.4 !important;
+        }
+        
+        .edgeLabel { background-color: white !important; padding: 2px; border-radius: 4px; opacity: 0.9; }
+
+        /* --- 工具列 --- */
+        .canvas-tools {
+            position: absolute; bottom: 20px; right: 20px; display: flex; gap: 5px;
+            background: white; padding: 5px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 5;
+        }
+        .tool-btn {
+            width: 36px; height: 36px; border: 1px solid #eee; background: white; border-radius: 6px; cursor: pointer;
+            font-size: 18px; color: #555; display: flex; justify-content: center; align-items: center;
+        }
+        .tool-btn:hover { background: #f0f0f0; color: #000; }
+
+        /* --- 彈出視窗 --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease; backdrop-filter: blur(2px);
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-content { background: white; width: 800px; max-width: 95%; max-height: 90vh; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .modal-body { padding: 20px; overflow-y: auto; font-size: 14px; line-height: 1.6; }
+        
+        .tab-group { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tab-btn { padding: 6px 14px; border: none; background: #f1f3f5; border-radius: 15px; cursor: pointer; font-weight: bold; color: #666; }
+        .tab-btn.active { background: var(--primary-color); color: white; }
+        .calc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .calc-table th, .calc-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        .calc-table th { background: #f8f9fa; position: sticky; top: 0; }
+        .percent-bar-fill { height: 100%; border-radius: 4px; background: var(--primary-color); }
+        .code-block { background: #2d2d2d; color: #ccc; padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; }
+        .reset-tag { font-size: 11px; background: #ff9800; color: white; padding: 1px 4px; border-radius: 3px; margin-left: 5px; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h1>📖 故事設計師 Ult</h1>
+        <div class="file-upload-wrapper">
+            <label for="fileInput" class="file-label">📁 上傳 JSON 檔案</label>
+            <input type="file" id="fileInput" accept=".json" />
+        </div>
+        <button class="btn" onclick="generateFlow()">🔄 重繪流程圖</button>
+        <button class="btn btn-calc" onclick="calculateAllEndings()">🧮 結局計算器</button>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; margin-top: 15px;">
+            <label style="font-size: 12px; color: #666; margin-bottom: 5px;">原始碼：</label>
+            <textarea id="jsonInput" placeholder="請上傳或貼上 JSON..."></textarea>
+        </div>
+        <div id="errorMsg" style="color:red; font-size:12px; margin-top:5px;"></div>
+    </aside>
+
+    <main class="main-content" id="mainCanvas">
+        <div id="graphContainer">
+            <div id="graphDiv" class="mermaid">
+                graph TD
+                A[準備就緒<br>請上傳檔案]:::start
+                classDef start fill:#fff,stroke:#ccc,stroke-dasharray: 5 5;
+            </div>
+        </div>
+        <div class="canvas-tools">
+            <button class="tool-btn" onclick="zoomIn()" title="放大">+</button>
+            <button class="tool-btn" onclick="zoomOut()" title="縮小">-</button>
+            <button class="tool-btn" onclick="resetView(true)" title="適應視窗 (Fit)">⛶</button>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle" style="margin:0; font-size:1.2rem;">標題</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentStoryData = null;
+        let lastCalculationResults = [];
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            document.querySelector('.file-label').innerText = "📄 " + file.name;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('jsonInput').value = evt.target.result;
+                generateFlow();
+            };
+            reader.readAsText(file);
+        });
+
+        function jsonToMermaid(storyData) {
+            let def = 'graph TD\n';
+            def += 'classDef default fill:#ffffff,stroke:#333,stroke-width:1px,rx:5,ry:5;\n';
+            def += 'classDef intro fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;\n';
+            def += 'classDef ending fill:#ffebee,stroke:#c62828,stroke-width:2px;\n';
+            
+            const scenes = storyData.scenes;
+            const endings = storyData.endings || [];
+
+            for (const [key, scene] of Object.entries(scenes)) {
+                // 放寬字數限制到 20 字，配合 CSS 換行
+                let text = (scene.dialogues && scene.dialogues[0]) ? scene.dialogues[0].replace(/<[^>]*>?/gm, '').substring(0, 20) : "無對白";
+                if(scene.dialogues && scene.dialogues[0].length > 20) text += "...";
+
+                let style = (key === 'intro') ? ':::intro' : '';
+                def += `${key}["<b>${key}</b><br>${text}"]${style}\n`;
+                def += `click ${key} showNodeDetails "詳情"\n`;
+
+                if (scene.choices) {
+                    scene.choices.forEach((c) => {
+                        let label = c.text.split('：')[0].replace(/"/g, "'").substring(0, 12);
+                        if(c.isReset) label += " ↻"; 
+                        def += `${key} -->|"${label}"| ${c.nextScene}\n`;
+                    });
+                }
+            }
+            if (endings.length > 0) {
+                def += `end_calc{{結局判定}}:::default\n`;
+                endings.forEach(e => {
+                    def += `${e.id}("🏁 ${e.title.replace(/【|】/g, '')}"):::ending\n`;
+                    def += `end_calc -.-> ${e.id}\n`;
+                    def += `click ${e.id} showEndingDetails "詳情"\n`;
+                });
+            }
+            return def;
+        }
+
+        async function generateFlow() {
+            const input = document.getElementById('jsonInput').value;
+            if (!input.trim()) return;
+            try {
+                currentStoryData = JSON.parse(input);
+                const syntax = jsonToMermaid(currentStoryData);
+                const graphDiv = document.getElementById('graphDiv');
+                graphDiv.removeAttribute('data-processed');
+                graphDiv.innerHTML = syntax;
+                await window.mermaid.run({ nodes: [graphDiv] });
+                setTimeout(() => resetView(true), 100);
+            } catch (e) {
+                document.getElementById('errorMsg').innerText = e.message;
+            }
+        }
+
+        // --- Zoom & Pan Logic ---
+        const mainCanvas = document.getElementById('mainCanvas');
+        const graphContainer = document.getElementById('graphContainer');
+        const graphDiv = document.getElementById('graphDiv');
+
+        let state = { scale: 1, pX: -20000, pY: -20000, isDragging: false, startX: 0, startY: 0 };
+        function updateTransform() { graphContainer.style.transform = `translate(${state.pX}px, ${state.pY}px) scale(${state.scale})`; }
+
+        mainCanvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const rect = mainCanvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const newScale = state.scale * (1 + (e.deltaY < 0 ? 1 : -1) * 0.1);
+            if (newScale < 0.05 || newScale > 5) return;
+            state.pX = mouseX - (mouseX - state.pX) * (newScale / state.scale);
+            state.pY = mouseY - (mouseY - state.pY) * (newScale / state.scale);
+            state.scale = newScale;
+            updateTransform();
+        });
+
+        mainCanvas.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.node')) return; 
+            state.isDragging = true;
+            state.startX = e.clientX - state.pX;
+            state.startY = e.clientY - state.pY;
+            mainCanvas.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!state.isDragging) return;
+            e.preventDefault();
+            state.pX = e.clientX - state.startX;
+            state.pY = e.clientY - state.startY;
+            updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => { state.isDragging = false; mainCanvas.style.cursor = 'grab'; });
+
+        window.zoomIn = () => { state.scale *= 1.2; updateTransform(); };
+        window.zoomOut = () => { state.scale /= 1.2; updateTransform(); };
+        window.resetView = (fit = false) => {
+            if (fit) {
+                const contentRect = graphDiv.getBoundingClientRect();
+                const containerRect = mainCanvas.getBoundingClientRect();
+                const width = contentRect.width / state.scale;
+                const height = contentRect.height / state.scale;
+                const scaleX = (containerRect.width * 0.9) / width;
+                const scaleY = (containerRect.height * 0.9) / height;
+                state.scale = Math.min(scaleX, scaleY, 1); 
+                const centerX = containerRect.width / 2;
+                const centerY = containerRect.height / 2;
+                state.pX = centerX - (width * state.scale) / 2 - (100 * state.scale); 
+                state.pY = centerY - (height * state.scale) / 2 - (100 * state.scale);
+            } else { state.scale = 1; state.pX = 0; state.pY = 0; }
+            updateTransform();
+        };
+
+        // ==========================================
+        // 計算機邏輯 (支援 isReset)
+        // ==========================================
+        function calculateAllEndings() {
+            if (!currentStoryData) { alert("請先載入 JSON"); return; }
+            const results = [];
+            const initialStats = {};
+            currentStoryData.config.stats.forEach(s => initialStats[s.id] = s.init);
+            
+            function traverse(sceneId, currentStats, pathLog) {
+                if (sceneId === 'end_calc' || !currentStoryData.scenes[sceneId]) {
+                    results.push({ path: pathLog, stats: {...currentStats}, ending: determineEnding(currentStats) });
+                    return;
+                }
+                const scene = currentStoryData.scenes[sceneId];
+                if (!scene.choices || scene.choices.length === 0) {
+                    results.push({ path: pathLog, stats: {...currentStats}, ending: determineEnding(currentStats) });
+                    return;
+                }
+                scene.choices.forEach(choice => {
+                    if (choice.req && !checkCondition(currentStats, choice.req)) return;
+                    
+                    let nextStats;
+                    
+                    // 這裡就是重置邏輯
+                    if (choice.isReset) {
+                        nextStats = {};
+                        currentStoryData.config.stats.forEach(s => {
+                            nextStats[s.id] = (choice.effects && choice.effects[s.id] !== undefined) ? choice.effects[s.id] : 0;
+                        });
+                    } else {
+                        nextStats = { ...currentStats };
+                        if (choice.effects) {
+                            for (let [k, v] of Object.entries(choice.effects)) {
+                                if (nextStats[k] === undefined) nextStats[k] = 0;
+                                nextStats[k] += v;
+                            }
+                        }
+                    }
+
+                    let choiceText = choice.text.split('：')[0].substring(0, 8);
+                    if (choice.isReset) choiceText += "(重置)";
+                    
+                    traverse(choice.nextScene, nextStats, [...pathLog, `${sceneId}→${choiceText}`]);
+                });
+            }
+
+            traverse('intro', initialStats, []);
+            lastCalculationResults = results;
+            renderCalculatorUI();
+        }
+
+        function checkCondition(stats, condition) {
+            const val = stats[condition.stat] || 0; const target = condition.val;
+            switch (condition.op) { case '>': return val > target; case '>=': return val >= target; case '<': return val < target; case '<=': return val <= target; case '==': return val == target; default: return false; }
+        }
+
+        function determineEnding(stats) {
+            const endings = currentStoryData.endings;
+            const sortedEndings = [...endings].sort((a, b) => b.priority - a.priority);
+            for (let end of sortedEndings) {
+                if (!end.conditions || end.conditions.length === 0) return end;
+                let match = true;
+                for (let cond of end.conditions) { if (!checkCondition(stats, cond)) { match = false; break; } }
+                if (match) return end;
+            }
+            return { title: "未知結局", id: "unknown", color: "#ccc" };
+        }
+
+        function renderCalculatorUI() {
+            const html = `<div class="tab-group"><button class="tab-btn active" onclick="switchTab('stats', this)">📊 結局統計</button><button class="tab-btn" onclick="switchTab('paths', this)">🛣️ 路徑明細</button></div><div id="calcContent" style="flex-grow:1; overflow:auto;"></div><div style="margin-top:10px; font-size:12px; color:#666; text-align:right;">共計算出 ${lastCalculationResults.length} 種路徑</div>`;
+            openModal("結局覆蓋率計算器", html); renderStatsView();
+        }
+
+        window.switchTab = function(mode, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+            if (mode === 'stats') renderStatsView(); else renderPathsView();
+        }
+
+        function renderStatsView() {
+            const stats = {}; lastCalculationResults.forEach(row => { const id = row.ending.id; if (!stats[id]) stats[id] = { title: row.ending.title, count: 0, color: row.ending.color }; stats[id].count++; });
+            const sorted = Object.values(stats).sort((a, b) => b.count - a.count);
+            let html = `<table class="calc-table"><thead><tr><th>結局名稱</th><th width="100">次數</th><th width="200">佔比</th></tr></thead><tbody>`;
+            sorted.forEach(item => { const pct = ((item.count / lastCalculationResults.length) * 100).toFixed(1); html += `<tr><td style="color:${item.color}; font-weight:bold;">${item.title}</td><td>${item.count}</td><td><div style="display:flex; align-items:center; gap:5px;"><div style="width:100px; background:#eee; height:8px; border-radius:4px;"><div class="percent-bar-fill" style="width:${pct}%"></div></div><span>${pct}%</span></div></td></tr>`; });
+            html += `</tbody></table>`; document.getElementById('calcContent').innerHTML = html;
+        }
+
+        function renderPathsView() {
+            let html = `<table class="calc-table"><thead><tr><th width="40%">路徑</th><th width="30%">數值</th><th width="30%">結局</th></tr></thead><tbody>`;
+            lastCalculationResults.forEach(row => { let statHtml = Object.entries(row.stats).map(([k,v])=>`<span style="background:#eee; padding:2px 4px; border-radius:3px; margin-right:3px; font-size:11px;">${k}:${v}</span>`).join(''); html += `<tr><td style="font-family:monospace; font-size:12px;">${row.path.join(' ➔ ')}</td><td>${statHtml}</td><td style="color:${row.ending.color}; font-weight:bold;">${row.ending.title}</td></tr>`; });
+            html += `</tbody></table>`; document.getElementById('calcContent').innerHTML = html;
+        }
+
+        window.showNodeDetails = (id) => { 
+            const scene = currentStoryData.scenes[id]; if (!scene) return; 
+            let html = `<div style="background:#f9f9f9; padding:10px;">${scene.dialogues.map(d=>`<p>${d}</p>`).join('')}</div>`; 
+            if (scene.choices) html += `<h4>選項</h4>` + scene.choices.map(c=>`<div style="margin-bottom:5px; border-left:3px solid #4a90e2; padding-left:5px;">
+                ${c.text} ${c.isReset ? '<span class="reset-tag">數值重置</span>' : ''} → ${c.nextScene} 
+                <br><small style="color:green">${JSON.stringify(c.effects||{})}</small></div>`).join(''); 
+            openModal(id, html); 
+        }
+        window.showEndingDetails = (id) => { const e = currentStoryData.endings.find(x => x.id === id); openModal(e.title, `<p>${e.desc}</p><blockquote>${e.quote}</blockquote><pre>${JSON.stringify(e.conditions)}</pre>`); }
+        function openModal(t, h) { document.getElementById('modalTitle').innerText=t; document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('active'); }
+        window.closeModal = (e) => { if(e && e.target!==document.getElementById('modalOverlay') && e.target.className!=='close-btn')return; document.getElementById('modalOverlay').classList.remove('active'); }
+    </script>
+</body>
+</html>
