@@ -336,7 +336,7 @@ body {
 
 .close-btn {
     display: block;
-    margin: 20px auto 0;
+    margin: 0px auto 0;
     padding: 10px 30px;
     background: #444;
     color: white;

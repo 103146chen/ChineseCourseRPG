@@ -115,14 +115,13 @@ function displayNextDialogue() {
     const nextBtn = document.getElementById('next-indicator');
     
     // 取得當前對話文字
-    // 注意：如果 currentDialogueIndex 已經超過範圍 (例如在選項階段)，這裡會是 undefined，需防呆
+    // 如果 currentDialogueIndex 已經超過範圍 (例如在選項階段)，這裡會是 undefined，需防呆
     let currentText = "";
     if (gameState.currentDialogueIndex < scene.dialogues.length) {
         currentText = scene.dialogues[gameState.currentDialogueIndex];
         
-        // ▼▼▼ 【修正 1】將對話加入回顧紀錄 ▼▼▼
+        // 將對話加入回顧紀錄
         Backlog.pushEntry(gameState, currentText);
-        // =====================================
     }
 
     // === 強制自動跳過文字邏輯 ===
@@ -217,9 +216,8 @@ function makeChoice(choice) {
             gameState.history = savedData.history;
             gameState.currentSceneId = savedData.currentSceneId;
             
-            // ▼▼▼ 【修正 2】讀檔時恢復 Backlog ▼▼▼
+            // 讀檔時恢復 Backlog
             gameState.backlog = savedData.backlog || [];
-            // ===================================
 
             UI.updateStatsUI(gameState.stats);
             loadScene(savedData.currentSceneId);

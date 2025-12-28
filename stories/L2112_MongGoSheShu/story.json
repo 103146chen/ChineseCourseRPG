@@ -1,0 +1,574 @@
+{
+  "config": {
+    "title": "看不見的門神：韓非子與現代職場",
+    "source_citation": "",
+    "stats": [
+      {
+        "id": "idealism",
+        "name": "初心",
+        "init": 70,
+        "color": "#3498db",
+        "description": "堅持原則與品質的決心"
+      },
+      {
+        "id": "reality",
+        "name": "現實",
+        "init": 60,
+        "color": "#f1c40f",
+        "description": "餐廳的資金流與生存能力"
+      },
+      {
+        "id": "relation",
+        "name": "人情",
+        "init": 60,
+        "color": "#e74c3c",
+        "description": "與家人、員工及人際網絡的關係"
+      }
+    ]
+  },
+  "scenes": {
+    "intro": {
+      "id": "intro",
+      "bg": "images/restaurant_warm.jpg",
+      "bgm": "audio/cozy_start.mp3",
+      "fx": "blur",
+      "dialogues": [
+        "你姊姊開了一家名為「暖食小館」的小餐廳。這是她的夢想，裝潢溫馨，料理用心。",
+        "生意一直穩定，直到三個月前，隔壁開了一家連鎖速食店。",
+        "客源一點一點流失。上週六晚上，店裡只有兩桌客人。姊姊盯著空蕩蕩的座位，擔憂著房租與成本。",
+        "這時，廚房助手小高提出了一個想法：",
+        "「老闆，我們可以用冷凍肉取代新鮮肉，找<span class='glossary' data-tip='指從事批發買賣，擁有大量貨源的商家'>大盤商</span>拿快過期的蔬菜...這樣成本至少降低三成。」",
+        "姊姊皺眉擔心味道變差，小高卻說：「現在的情況，可能要<span class='glossary' data-tip='講究實際，不追求空泛的理想'>務實</span>一點。」",
+        "姊姊看向你：「你覺得呢？」"
+      ],
+      "choices": [
+        {
+          "text": "支持小高的建議，生存優先",
+          "nextScene": "intro_bridge_support",
+          "stats_text": "📉 初心受損，現實壓力減輕",
+          "effects": { "idealism": -15, "reality": 15, "relation": 5 },
+          "analysis": {
+            "title": "妥協的開端",
+            "status": "warning",
+            "content": "你選擇了暫時的生存。韓非子認為，禍患常起於微小的忽視。這看似合理的「務實」，可能是原則崩壞的開始。"
+          }
+        },
+        {
+          "text": "堅持原本做法，另想開源之道",
+          "nextScene": "intro_bridge_resist",
+          "stats_text": "🛡️ 堅守初心，現實風險增加",
+          "effects": { "idealism": 10, "reality": -10, "relation": -5 },
+          "analysis": {
+            "title": "理想的代價",
+            "status": "success",
+            "content": "你試圖守護姊姊的初衷。但在激烈的市場競爭（猛狗）面前，光有理想而無策略，可能難以持久。"
+          }
+        },
+        {
+          "text": "折衷方案：部分維持，部分平價",
+          "nextScene": "intro_bridge_compromise",
+          "stats_text": "⚖️ 試圖平衡，定位模糊",
+          "effects": { "idealism": -5, "reality": 5, "relation": 0 },
+          "analysis": {
+            "title": "中庸的陷阱",
+            "status": "info",
+            "content": "試圖兩全其美往往導致兩邊都不討好。在價值觀的選擇上，模糊地帶往往是最危險的。"
+          }
+        }
+      ]
+    },
+    
+    "intro_bridge_support": {
+      "id": "intro_bridge_support",
+      "bg": "images/restaurant_dim.jpg",
+      "bgm": "audio/decision_sad.mp3",
+      "dialogues": [
+        "你看著姊姊憔悴的臉龐，輕輕點了點頭。",
+        "「活下去比較重要，姊。我們先撐過這段時間。」",
+        "姊姊聽了你的話，彷彿找到了一個台階下。她深吸一口氣，轉頭對小高說：「好，就照你說的做吧。但我們要小心，盡量別讓客人吃出來。」",
+        "小高露出了勝利的微笑，立刻開始打電話叫貨。"
+      ],
+      "choices": [
+        { "text": "改變開始了...", "nextScene": "scene_2" }
+      ]
+    },
+
+    "intro_bridge_resist": {
+      "id": "intro_bridge_resist",
+      "bg": "images/restaurant_empty.jpg",
+      "bgm": "audio/sad_piano.mp3",
+      "dialogues": [
+        "「不行。」你語氣堅定，「如果我們跟隔壁一樣，那『暖食小館』就沒有存在的意義了。」",
+        "姊姊被你的堅持打動，決定再撐一陣子。",
+        "然而，現實是殘酷的。一週後的月底，房東來催租，供應商來討貨款，姊姊看著空蕩蕩的帳戶，崩潰痛哭。",
+        "「對不起...」姊姊擦乾眼淚，顫抖著撥通了小高建議的那家便宜供應商的電話，「我真的撐不下去了。」"
+      ],
+      "choices": [
+        { "text": "現實迫使改變...", "nextScene": "scene_2" }
+      ]
+    },
+
+    "intro_bridge_compromise": {
+      "id": "intro_bridge_compromise",
+      "bg": "images/restaurant_confused.jpg",
+      "bgm": "audio/decision_neutral.mp3",
+      "dialogues": [
+        "「或許我們可以試著找個平衡點？」你提出了中庸之道。「保留招牌菜，但推出一些平價選項。」",
+        "姊姊採納了這個建議。但結果並不如預期：想吃好的客人覺得餐廳變廉價了，想吃便宜的客人覺得不夠便宜。",
+        "在兩頭不到岸的窘境下，為了挽救營收，姊姊不得不逐漸增加平價餐點的比例，最終，那些高品質的堅持被一點一點地稀釋掉了。"
+      ],
+      "choices": [
+        { "text": "逐漸滑坡...", "nextScene": "scene_2" }
+      ]
+    },
+
+    "scene_2": {
+      "id": "scene_2",
+      "bg": "images/kitchen_busy.jpg",
+      "bgm": "audio/tension_low.mp3",
+      "dialogues": [
+        "更換經營策略後，餐廳變成了以「超值套餐」為主力。",
+        "生意確實好轉了，人潮回來了，但你也聽到熟客的抱怨：「味道變了」、「少了點什麼」。",
+        "小高見狀，進一步提議：「老闆，既然人氣回來了，不如趁勝追擊擴大營業？多開分店，走<span class='glossary' data-tip='利潤雖低，但透過大量銷售來賺取利潤'>薄利多銷</span>的路線。」",
+        "姊姊猶豫不決，這意味著要徹底轉型成她原本不想做的樣子。"
+      ],
+      "choices": [
+        {
+          "text": "支持擴大營業，規模化競爭",
+          "nextScene": "scene_2_bridge_expand",
+          "effects": { "idealism": -20, "reality": 20 },
+          "analysis": {
+            "title": "隨波逐流",
+            "status": "warning",
+            "content": "你選擇了將錯就錯。當標準一旦降低，為了維持規模，往往需要更多的妥協來支撐。"
+          }
+        },
+        {
+          "text": "勸姊姊回到初衷，縮小規模",
+          "nextScene": "scene_2_bridge_shrink",
+          "effects": { "idealism": 15, "reality": -15 },
+          "analysis": {
+            "title": "止損的勇氣",
+            "status": "success",
+            "content": "承認錯誤比堅持錯誤更難。你試圖拉住正在滑坡的姊姊。"
+          }
+        },
+        {
+          "text": "建議暫停，思考真正想要什麼",
+          "nextScene": "scene_2_bridge_pause",
+          "effects": { "idealism": 5, "reality": -5 },
+          "analysis": {
+            "title": "沉澱",
+            "status": "info",
+            "content": "有時候，不做決定也是一種決定。但在商場如戰場的環境下，猶豫可能錯失良機。"
+          }
+        }
+      ]
+    },
+
+    "scene_2_bridge_expand": {
+      "id": "scene_2_bridge_expand",
+      "bg": "images/busy_counter.jpg",
+      "dialogues": [
+        "你被眼前上升的營業額沖昏了頭。「這就是商業模式啊！姊，我們要趁勝追擊。」",
+        "為了應付擴大的客流量，廚房變得像戰場。為了追求速度，不再有人在意擺盤，不再有人在意食材的細節。",
+        "在這種高壓與混亂中，對於標準的忽視變成了一種「必要之惡」。"
+      ],
+      "choices": [
+        { "text": "忙亂中掩蓋了問題...", "nextScene": "scene_3" }
+      ]
+    },
+
+    "scene_2_bridge_shrink": {
+      "id": "scene_2_bridge_shrink",
+      "bg": "images/kitchen_quiet.jpg",
+      "dialogues": [
+        "「姊，停下來吧。」你試圖踩煞車，「我們不需要賺那麼多，夠用就好。」",
+        "姊姊雖然聽進去了，但縮小規模意味著收入銳減。看著依然高昂的固定成本，她陷入了另一種焦慮。",
+        "「如果收入變少，那成本就要壓得更低...」這種焦慮讓她對小高後續的一些「省錢小動作」，選擇了睜一隻眼閉一隻眼。"
+      ],
+      "choices": [
+        { "text": "焦慮導致了忽視...", "nextScene": "scene_3" }
+      ]
+    },
+
+    "scene_2_bridge_pause": {
+      "id": "scene_2_bridge_pause",
+      "bg": "images/office_thoughtful.jpg",
+      "dialogues": [
+        "你建議姊姊先緩一緩。姊姊躲進了辦公室思考人生，將廚房完全交給了小高管理。",
+        "權力真空讓小高得以完全掌控廚房。他在沒有監管的情況下，建立了一套屬於他的「高效」規則——一套完全無視衛生與道德的規則。",
+        "當姊姊還在猶豫時，廚房已經變質了。"
+      ],
+      "choices": [
+        { "text": "疏於管理導致失控...", "nextScene": "scene_3" }
+      ]
+    },
+
+    "scene_3": {
+      "id": "scene_3",
+      "bg": "images/kitchen_dirty.jpg",
+      "bgm": "audio/creepy_undertone.mp3",
+      "dialogues": [
+        "無論是因為忙亂、焦慮還是疏忽，廚房的標準已經徹底崩壞。",
+        "你發現小高開始撕換食材標籤，甚至撿起掉在地上的食材繼續用。他笑說：「大家都在做，只要不吃壞肚子就好。」",
+        "你向姊姊反映，她卻疲憊地說：「我知道。但若堅持高標準，店會倒...我們現在騎虎難下。」",
+        "你是這間廚房裡唯一的清醒者，你要怎麼做？"
+      ],
+      "choices": [
+        {
+          "text": "再次嚴肅向姊姊報告，堅持改善",
+          "nextScene": "scene_3_bridge_report",
+          "effects": { "idealism": 10, "relation": -10 },
+          "analysis": {
+            "title": "直言敢諫",
+            "status": "success",
+            "content": "你選擇了做那隻「吠叫的狗」，試圖警醒主人。這可能會傷害關係，但這是打破沉默螺旋的唯一方式。"
+          }
+        },
+        {
+          "text": "私下要求小高，不讓姊姊為難",
+          "nextScene": "scene_3_bridge_private",
+          "effects": { "idealism": -5, "relation": 5 },
+          "analysis": {
+            "title": "無效的修補",
+            "status": "warning",
+            "content": "你試圖在體制內私了，但沒有解決根源問題（成本結構）。韓非子認為，法度不清，私下的道德勸說往往無效。"
+          }
+        },
+        {
+          "text": "親自下場監督，力挽狂瀾",
+          "nextScene": "scene_3_bridge_action",
+          "effects": { "idealism": 5, "reality": -5 },
+          "analysis": {
+            "title": "個人的極限",
+            "status": "info",
+            "content": "你試圖用個人的努力對抗系統的腐敗，猶如<span class='glossary' data-tip='比喻力量微小，妄想動搖強大的事物'>蚍蜉撼樹</span>，雖然可敬，但難以持久。"
+          }
+        }
+      ]
+    },
+
+    "scene_3_bridge_report": {
+      "id": "scene_3_bridge_report",
+      "bg": "images/office_conflict.jpg",
+      "dialogues": [
+        "你強硬地要求姊姊正視問題。姊姊在壓力下終於崩潰，她哭著承認了自己的軟弱。",
+        "但就在她準備整頓廚房的隔天，一位客人因為之前的食材問題出現了腸胃不適。",
+        "這個意外發生得太快，即使你已經提出了警告，炸彈還是引爆了。"
+      ],
+      "choices": [
+        { "text": "後果顯現...", "nextScene": "scene_4" }
+      ]
+    },
+
+    "scene_3_bridge_private": {
+      "id": "scene_3_bridge_private",
+      "bg": "images/alley_talk.jpg",
+      "dialogues": [
+        "你試圖私下解決。小高表面答應，背地裡卻做得更隱密。",
+        "「你以為你在幫誰？」小高嘲笑你，「如果按照標準流程，你姊姊明天就要破產。」",
+        "你的包庇反而讓他有恃無恐，直到一位客人的投訴電話打破了這虛假的平衡。"
+      ],
+      "choices": [
+        { "text": "後果顯現...", "nextScene": "scene_4" }
+      ]
+    },
+
+    "scene_3_bridge_action": {
+      "id": "scene_3_bridge_action",
+      "bg": "images/kitchen_late.jpg",
+      "dialogues": [
+        "你試圖用自己的勞力來彌補制度的漏洞。你累得像條狗，守住了你當班時的品質。",
+        "但你無法24小時都在。在你休假的那天，沒有人監管的小高使用了變質的奶油。",
+        "當你接到電話趕回店裡時，一切都已經來不及了。"
+      ],
+      "choices": [
+        { "text": "後果顯現...", "nextScene": "scene_4" }
+      ]
+    },
+
+    "scene_4": {
+      "id": "scene_4",
+      "bg": "images/office_night.jpg",
+      "bgm": "audio/sad_piano.mp3",
+      "dialogues": [
+        "客人食物中毒事件雖然平息了，但代價是巨大的。小高走了，留下一堆爛攤子。",
+        "姊姊為了贖罪，換回了高品質食材，取消了所有優惠，並親自掌廚。結果是成本飆升，客人流失。",
+        "這時，爸爸打電話來關心。你知道，家裡如果知道真相，情況會變得很複雜。",
+        "姊姊看著你，眼神充滿了恐懼，她怕被家人責備，也怕再一次失敗。"
+      ],
+      "choices": [
+        {
+          "text": "如實報告困境，尋求建議",
+          "nextScene": "scene_4_bridge_tell",
+          "effects": { "relation": 10, "idealism": 0 },
+          "analysis": {
+            "title": "引入外力",
+            "status": "info",
+            "content": "你打開了門，讓外部力量介入。這可能帶來資源，也可能引狼入室。"
+          }
+        },
+        {
+          "text": "報喜不報憂，維護尊嚴",
+          "nextScene": "scene_4_bridge_hide",
+          "effects": { "relation": -5, "idealism": 5 },
+          "analysis": {
+            "title": "孤獨的堅持",
+            "status": "success",
+            "content": "你試圖保護姊姊的獨立性，避免她被家人的意見左右，但這也讓她更加孤立無援。"
+          }
+        },
+        {
+          "text": "開口借錢週轉",
+          "nextScene": "scene_4_bridge_borrow",
+          "effects": { "reality": 10, "relation": -10 },
+          "analysis": {
+            "title": "飲鴆止渴",
+            "status": "warning",
+            "content": "金錢可以買到時間，但買不到解決方案。債務只會加重姊姊心理的負擔。"
+          }
+        }
+      ]
+    },
+
+    "scene_4_bridge_tell": {
+      "id": "scene_4_bridge_tell",
+      "bg": "images/phone_call_sad.jpg",
+      "dialogues": [
+        "你選擇了坦白。父親在電話那頭沉默了許久，嘆了口氣：「我就知道你們搞不定。」",
+        "「別擔心，我有辦法。」父親的語氣變得強勢，「我有個朋友在食品業很久了，我帶他去看看。」",
+        "你本意是尋求情感支持，卻意外引來了強勢的「家長式介入」。"
+      ],
+      "choices": [
+        { "text": "父親帶著朋友來了...", "nextScene": "scene_5" }
+      ]
+    },
+
+    "scene_4_bridge_hide": {
+      "id": "scene_4_bridge_hide",
+      "bg": "images/phone_call_fake.jpg",
+      "dialogues": [
+        "你選擇了隱瞞。但紙包不住火，一週後，因為付不出廠商貨款，供應商直接打電話到家裡（因為保證人是爸爸）。",
+        "爸爸震怒，立刻殺到店裡。「發生這麼大的事還想瞞我？」",
+        "隨同他一起來的，還有一位看起來精明幹練的「食品業朋友」。"
+      ],
+      "choices": [
+        { "text": "隱瞞反而導致更強的介入...", "nextScene": "scene_5" }
+      ]
+    },
+
+    "scene_4_bridge_borrow": {
+      "id": "scene_4_bridge_borrow",
+      "bg": "images/phone_call_tense.jpg",
+      "dialogues": [
+        "你開口借錢。爸爸拒絕了直接匯款：「借錢只是填無底洞。既然經營有問題，就要從源頭解決。」",
+        "「我帶個專家過去幫你們看看，他是行家，聽他的準沒錯。」",
+        "你試圖用借錢來擋住家人的介入，結果反而給了他們直接插手經營的理由。"
+      ],
+      "choices": [
+        { "text": "專家來了...", "nextScene": "scene_5" }
+      ]
+    },
+
+    "scene_5": {
+      "id": "scene_5",
+      "bg": "images/negotiation.jpg",
+      "bgm": "audio/suspense.mp3",
+      "fx": "shake",
+      "dialogues": [
+        "爸爸帶來的這位「朋友」，一針見血地點出了成本問題。",
+        "他拿出了一份新供應商的合約，成本降低四成。「只要符合衛生標準，不出事就是好食材。做生意要<span class='glossary' data-tip='講究實際，不追求空泛的理想'>務實</span>。」",
+        "他不是在商量，他是在「解救」你們。他背後站著的是爸爸的威嚴和解決債務的希望。",
+        "這個朋友就像韓非子筆下的<span class='glossary' data-tip='比喻壞人依靠權勢或人情，使人不敢輕易去揭發或懲治'>社鼠</span>——他躲在父親的人情背後，讓你<span class='glossary' data-tip='想丟東西打老鼠，又怕砸壞了祭祀用的器具。比喻想除害，因有所顧忌而不敢下手'>投鼠忌器</span>。"
+      ],
+      "choices": [
+        {
+          "text": "支持接受提議，先活下去再說",
+          "nextScene": "scene_5_bridge_accept",
+          "effects": { "reality": 20, "idealism": -30 },
+          "analysis": {
+            "title": "向現實低頭",
+            "status": "warning",
+            "content": "你接受了「社鼠」的邏輯。雖然生存值上升，但你們正在成為體制共犯的一部分。"
+          }
+        },
+        {
+          "text": "勸姊姊拒絕，並與長輩據理力爭",
+          "nextScene": "scene_5_bridge_reject",
+          "effects": { "idealism": 20, "reality": -10, "relation": -10 },
+          "analysis": {
+            "title": "對抗人情",
+            "status": "success",
+            "content": "你選擇了得罪父親的朋友（猛狗/社鼠），來守護姊姊的原則。這需要極大的勇氣。"
+          }
+        },
+        {
+          "text": "建議試用一個月",
+          "nextScene": "scene_5_bridge_trial",
+          "effects": { "idealism": -10, "reality": 10 },
+          "analysis": {
+            "title": "緩兵之計",
+            "status": "info",
+            "content": "試探性的妥協往往是全面崩壞的前奏。"
+          }
+        }
+      ]
+    },
+
+    "scene_5_bridge_accept": {
+      "id": "scene_5_bridge_accept",
+      "bg": "images/contract_sign.jpg",
+      "dialogues": [
+        "你點頭表示支持。姊姊鬆了一口氣，彷彿卸下了千斤重擔。",
+        "「謝謝叔叔幫忙。」她簽下了合約。氣氛瞬間變得融洽，爸爸露出了滿意的笑容。",
+        "這是一個皆大歡喜的場面，除了你心裡那股揮之不去的違和感。"
+      ],
+      "choices": [
+        { "text": "兩個月後...", "nextScene": "scene_6" }
+      ]
+    },
+
+    "scene_5_bridge_reject": {
+      "id": "scene_5_bridge_reject",
+      "bg": "images/conflict_family.jpg",
+      "dialogues": [
+        "你極力反對，甚至與父親發生了爭執。「我們不能用這種來路不明的東西！」",
+        "父親勃然大怒，拍桌而起：「你懂什麼？你姊姊都要破產了，你還要害死她嗎？」",
+        "那位朋友冷冷地看著姊姊：「如果是這樣，那之前的私人借貸，我可能要現在收回了。」",
+        "在債務逼迫與親情勒索的雙重夾擊下，姊姊含著淚，顫抖著手簽下了合約。你的反抗沒能阻止結果，但至少你發出了聲音。"
+      ],
+      "choices": [
+        { "text": "兩個月後...", "nextScene": "scene_6" }
+      ]
+    },
+
+    "scene_5_bridge_trial": {
+      "id": "scene_5_bridge_trial",
+      "bg": "images/negotiation_hesitant.jpg",
+      "dialogues": [
+        "你提出了試用期的折衷方案。那位朋友笑了笑：「行，年輕人比較謹慎。」",
+        "合約簽了，但條款裡藏著魔鬼——「試用期滿若未書面反對視同續約」。",
+        "兩個月在忙碌中很快過去，當你們想反悔時，已經被合約綁死了。"
+      ],
+      "choices": [
+        { "text": "兩個月後...", "nextScene": "scene_6" }
+      ]
+    },
+
+    "scene_6": {
+      "id": "scene_6",
+      "bg": "images/warehouse_dark.jpg",
+      "bgm": "audio/final_decision.mp3",
+      "dialogues": [
+        "時間來到兩個月後。你發現供應商的食材來源不明，甚至涉及偽造檢驗報告。",
+        "這家供應商專門利用<span class='glossary' data-tip='法律或規則不明確的地方'>灰色地帶</span>。姊姊想解約，但合約上的違約金足以讓她立刻破產。",
+        "爸爸還打電話來施壓：「人家幫妳，妳還懷疑人家？別不知好歹。」",
+        "姊姊崩潰了：「我只是想好好開餐廳，為什麼這麼難？」",
+        "這一次，沒有退路了，必須做最後的決斷。"
+      ],
+      "choices": [
+        {
+          "text": "長痛不如短痛，建議立刻終止合約（即使要賠錢）",
+          "nextScene": "scene_6_bridge_quit",
+          "isReset": false,
+          "effects": { "idealism": 30, "reality": -50 },
+          "analysis": {
+            "title": "壯士斷腕",
+            "status": "success",
+            "content": "你選擇了最艱難但最正確的路。這將導致財務重創，但保留了靈魂。"
+          }
+        },
+        {
+          "text": "收集證據，試圖走法律途徑",
+          "nextScene": "scene_6_bridge_law",
+          "effects": { "idealism": 10, "reality": -20 },
+          "analysis": {
+            "title": "理性的抗爭",
+            "status": "info",
+            "content": "這是一條漫長的路，可能會失敗，但你試圖用體制內的規則對抗體制的腐敗。"
+          }
+        },
+        {
+          "text": "忍氣吞聲，撐完合約期",
+          "nextScene": "scene_6_bridge_endure",
+          "effects": { "idealism": -40, "reality": 10 },
+          "analysis": {
+            "title": "徹底的沉淪",
+            "status": "warning",
+            "content": "你選擇了繼續與「社鼠」共存。餐廳或許能活下來，但姊姊的夢想已經死去了。"
+          }
+        }
+      ]
+    },
+
+    "scene_6_bridge_quit": {
+      "id": "scene_6_bridge_quit",
+      "bg": "images/office_final.jpg",
+      "dialogues": [
+        "「賠錢就賠錢！店不開了！」你用力拍桌，這句話驚醒了哭泣的姊姊。",
+        "「我們不能變成自己討厭的人。」你的聲音堅定。姊姊擦乾眼淚，眼神中重新燃起了光芒。",
+        "「對，關店。」她說，「我寧願去打工還債，也不要在這裡賣這種東西。」"
+      ],
+      "choices": [
+        { "text": "進入結局", "nextScene": "end_calc" }
+      ]
+    },
+
+    "scene_6_bridge_law": {
+      "id": "scene_6_bridge_law",
+      "bg": "images/office_documents.jpg",
+      "dialogues": [
+        "你選擇了蒐證。這是一場艱苦的戰鬥，你們不僅要對抗供應商，還要面對爸爸的不諒解。",
+        "雖然不一定能贏，但你們決定不再沉默。姊姊開始聯絡律師，眼神雖然疲憊，但充滿了鬥志。"
+      ],
+      "choices": [
+        { "text": "進入結局", "nextScene": "end_calc" }
+      ]
+    },
+
+    "scene_6_bridge_endure": {
+      "id": "scene_6_bridge_endure",
+      "bg": "images/kitchen_gloomy.jpg",
+      "dialogues": [
+        "你別過頭去，不敢看姊姊絕望的眼睛。「再忍十個月吧...除此之外我們別無選擇。」",
+        "姊姊默默地走進廚房，拿起那些有問題的食材。從背影看去，她彷彿老了十歲。",
+        "店保住了，但那個充滿熱情的姊姊，已經死在這個晚上了。"
+      ],
+      "choices": [
+        { "text": "進入結局", "nextScene": "end_calc" }
+      ]
+    }
+  },
+  "endings": [
+    {
+      "id": "end_new_start",
+      "title": "失敗的勝利者",
+      "priority": 50,
+      "conditions": [
+        { "stat": "idealism", "op": ">=", "val": 70 }
+      ],
+      "image": "images/end_sunset.jpg",
+      "desc": "姊姊選擇了關店。雖然賠了錢，得罪了人，但她說：「我不後悔。」一年後，她開了一間私廚，雖然規模小，但每一個微笑都是真實的。<br>你明白了韓非子的教訓：真正的敵人，是那些藏在「為你好」背後的妥協。"
+    },
+    {
+      "id": "end_compromise",
+      "title": "被保護的真相",
+      "priority": 40,
+      "conditions": [
+        { "stat": "reality", "op": ">", "val": 60 },
+        { "stat": "idealism", "op": "<", "val": 50 }
+      ],
+      "image": "images/end_busy_store.jpg",
+      "desc": "餐廳存活了下來，生意興隆。姊姊變成了另一個「爸爸的朋友」，她學會了說「業界慣例」，學會了對標籤視而不見。<br>店還在，但那個眼神有光的姊姊已經消失了。她成為了這龐大共犯結構中的另一隻「社鼠」。"
+    },
+    {
+      "id": "end_bankruptcy",
+      "title": "無聲的結局",
+      "priority": 10,
+      "conditions": [],
+      "image": "images/end_closed.jpg",
+      "desc": "在猶豫與掙扎中，資金耗盡，餐廳倒閉。這是一個遺憾的結局，或許是因為不夠務實，或許是因為不夠堅決。這讓你思考：在理想與現實之間，是否真的沒有第三條路？"
+    }
+  ]
+}
