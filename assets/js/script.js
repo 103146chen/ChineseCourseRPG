@@ -1,13 +1,14 @@
 /**
  * script.js
- * 遊戲主控制器 - 包含自動跳過對話與過場的完整邏輯 (修正 Backlog 版)
+ * 遊戲主控制器 - 已整合 Gadget 道具系統
  */
 
 import * as UI from './ui.js';
 import * as Utils from './utils.js';
 import * as Debug from './debug.js';
-import * as Backlog from './backlog.js'; // 引入 Backlog
+import * as Backlog from './backlog.js';
 import * as Exporter from './export.js';
+import * as Gadget from './gadget.js'; // 引入道具模組
 
 let gameState = {
     stats: {},              
@@ -16,10 +17,11 @@ let gameState = {
     storyData: null,        
     basePath: '',           
     history: [],
-    backlog: [],       // 確保這裡有初始陣列
+    backlog: [],
+    inventory: [],     // 道具清單
     storyId: '',
-    isAutoSkip: false, // 自動跳過開關
-    isDebug: false     // Debug 模式狀態
+    isAutoSkip: false, 
+    isDebug: false     
 };
 
 // 初始化遊戲
@@ -114,21 +116,15 @@ function displayNextDialogue() {
     const storyBox = document.getElementById('story-text');
     const nextBtn = document.getElementById('next-indicator');
     
-    // 取得當前對話文字
-    // 如果 currentDialogueIndex 已經超過範圍 (例如在選項階段)，這裡會是 undefined，需防呆
     let currentText = "";
     if (gameState.currentDialogueIndex < scene.dialogues.length) {
         currentText = scene.dialogues[gameState.currentDialogueIndex];
-        
-        // 將對話加入回顧紀錄
         Backlog.pushEntry(gameState, currentText);
     }
 
     // === 強制自動跳過文字邏輯 ===
     if (gameState.isDebug && gameState.isAutoSkip) {
         gameState.currentDialogueIndex = scene.dialogues.length;
-        
-        // 顯示最後一句話
         storyBox.innerHTML = scene.dialogues[scene.dialogues.length - 1];
         storyBox.style.opacity = 1;
         nextBtn.classList.add('hidden');
@@ -139,7 +135,6 @@ function displayNextDialogue() {
 
     nextBtn.classList.remove('hidden');
     
-    // 顯示文字
     storyBox.innerHTML = currentText;
     storyBox.style.opacity = 0;
     setTimeout(() => storyBox.style.opacity = 1, 50);
@@ -171,6 +166,7 @@ function showChoices() {
     let availableChoices = [];
 
     scene.choices.forEach(choice => {
+        // 1. 檢查數值條件 (Stats)
         if (choice.req) {
             const currentVal = gameState.stats[choice.req.stat];
             const targetVal = choice.req.val;
@@ -183,6 +179,11 @@ function showChoices() {
                 case '==': met = currentVal == targetVal; break;
             }
             if (!met) return;
+        }
+
+        // 2. 檢查道具條件 (Items) -> 呼叫 Gadget 模組
+        if (!Gadget.checkReq(gameState, choice.reqItem)) {
+            return;
         }
 
         availableChoices.push(choice);
@@ -215,9 +216,10 @@ function makeChoice(choice) {
             gameState.stats = savedData.stats;
             gameState.history = savedData.history;
             gameState.currentSceneId = savedData.currentSceneId;
-            
-            // 讀檔時恢復 Backlog
             gameState.backlog = savedData.backlog || [];
+            
+            // 恢復背包
+            gameState.inventory = savedData.inventory || [];
 
             UI.updateStatsUI(gameState.stats);
             loadScene(savedData.currentSceneId);
@@ -227,6 +229,9 @@ function makeChoice(choice) {
         }
         return;
     }
+
+    // 處理道具獲得/消耗 -> 呼叫 Gadget 模組
+    Gadget.handleChoice(gameState, choice);
 
     if (choice.analysis) {
         const sceneTitleRaw = gameState.storyData.scenes[gameState.currentSceneId].dialogues[0];
@@ -269,6 +274,7 @@ function evaluateEnding() {
     }
 }
 
+// 綁定全域按鈕事件
 window.showReview = function() {
     UI.renderReviewList(gameState.history);
     document.getElementById('review-container').classList.remove('hidden');
@@ -294,6 +300,11 @@ window.printPortfolio = function() {
 
 window.toggleBacklog = function() {
     Backlog.toggle(gameState);
+}
+
+// 新增：綁定背包按鈕事件
+window.toggleGadget = function() {
+    Gadget.toggle(gameState);
 }
 
 window.onload = initGame;

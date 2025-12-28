@@ -209,32 +209,17 @@
             border-radius: 50%;
         }
 
-        /* 當被勾選時 (重置模式) */
-        input:checked + .slider {
-            background-color: #e74c3c; /* 警告色 (紅色) */
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(24px); /* 滑動效果 */
-        }
-
-        /* 狀態文字容器 */
-        .mode-label-box {
-            display: flex; 
-            align-items: center; 
-            background: #2a2a2a; 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            border: 1px solid #444;
-            margin-bottom: 15px;
-            transition: 0.3s;
-        }
-
-        /* 當切換到重置模式時，外框也變紅提醒 */
-        .mode-label-box.danger-mode {
-            border-color: #e74c3c;
-            background: rgba(231, 76, 60, 0.1);
-        }
+        input:checked + .slider { background-color: #e74c3c; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .mode-label-box.danger-mode { border-color: #e74c3c; background: rgba(231, 76, 60, 0.1); }
+        
+        /* Checkbox Toggle 簡化版樣式 */
+        .t-switch { position: relative; display: inline-block; width: 40px; height: 20px; margin-right: 10px; }
+        .t-switch input { opacity: 0; width: 0; height: 0; }
+        .t-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .t-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .t-slider { background-color: #e74c3c; }
+        input:checked + .t-slider:before { transform: translateX(20px); }
 
     </style>
 </head>
@@ -243,7 +228,7 @@
     <div class="sidebar">
         <div class="sidebar-header">
             RPG Story Editor
-            <div style="font-size: 0.8rem; color: #888; font-weight: normal;">教學專用版 v2.2</div>
+            <div style="font-size: 0.8rem; color: #888; font-weight: normal;">教學專用版 v2.2 (Items+)</div>
         </div>
         
         <div class="nav-tabs">
@@ -295,7 +280,8 @@
                 title: "未命名故事",
                 stats: [
                     { id: "hp", name: "生命值", init: 100, color: "#e74c3c" }
-                ]
+                ],
+                items: [] // 新增：道具清單
             },
             scenes: {
                 "intro": {
@@ -354,7 +340,7 @@
         //  編輯器渲染 (核心邏輯)
         // ==========================================================
 
-        // 1. 設定 (Config)
+        // 1. 設定 (Config) - 包含 Stats 和 Items
         function renderConfigEditor() {
             const container = document.getElementById('editor-content-area');
             document.getElementById('editor-title').innerText = "全域設定 (Config)";
@@ -370,8 +356,14 @@
                 <p style="font-size:0.8rem; color:#888;">定義遊戲中會用到的變數，ID 只能為英文與數字。</p>
                 <div id="stats-config-list"></div>
                 <button class="outline sm" onclick="addStatConfig()">+ 新增數值</button>
+
+                <h3>道具圖鑑 (Items)</h3>
+                <p style="font-size:0.8rem; color:#888;">定義遊戲中可獲得的道具。</p>
+                <div id="items-config-list"></div>
+                <button class="outline sm" onclick="addItemConfig()">+ 新增道具</button>
             `;
             renderStatConfigList();
+            renderItemConfigList();
         }
 
         function renderStatConfigList() {
@@ -395,20 +387,35 @@
             });
         }
 
+        function renderItemConfigList() {
+            const list = document.getElementById('items-config-list');
+            list.innerHTML = '';
+            (storyData.config.items || []).forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.style.marginBottom = '10px';
+                row.innerHTML = `
+                    <div class="col" style="flex:0.5"><input placeholder="ID (如 key)" value="${item.id}" oninput="updateItemConfig(${idx}, 'id', this.value)"></div>
+                    <div class="col"><input placeholder="道具名稱" value="${item.name}" oninput="updateItemConfig(${idx}, 'name', this.value)"></div>
+                    <div class="col" style="flex:1.5"><input placeholder="描述" value="${item.desc||''}" oninput="updateItemConfig(${idx}, 'desc', this.value)"></div>
+                    <button class="danger sm" onclick="removeItemConfig(${idx})">×</button>
+                `;
+                list.appendChild(row);
+            });
+        }
+
         // 2. 場景 (Scene)
         function renderSceneEditor(sceneId) {
             const scene = storyData.scenes[sceneId];
             const container = document.getElementById('editor-content-area');
             document.getElementById('editor-title').innerText = `編輯場景: ${sceneId}`;
             
-            // 【修改重點 1】如果是 intro，隱藏刪除按鈕
             if (sceneId === 'intro') {
                 document.getElementById('btn-delete').classList.add('hidden');
             } else {
                 document.getElementById('btn-delete').classList.remove('hidden');
             }
 
-            // 【修改重點 2】如果是 intro，ID 輸入框設為 disabled
             const disabledAttr = (sceneId === 'intro') ? 'disabled title="起始場景 ID 不可變更"' : '';
             const idInputStyle = (sceneId === 'intro') ? 'border-color: #d4af37;' : '';
 
@@ -472,8 +479,6 @@
                 let effectsHTML = `<div class="stats-grid">`;
                 storyData.config.stats.forEach(stat => {
                     const val = (choice.effects && choice.effects[stat.id] !== undefined) ? choice.effects[stat.id] : 0;
-                    
-                    // 根據是否勾選重置，改變提示文字
                     const placeholder = isReset ? '設定為 (直接覆蓋)' : '累加 (輸入正負數)';
                     const labelSign = isReset ? '(=)' : '(+)';
                     
@@ -518,7 +523,6 @@
                         <summary style="cursor:pointer; color:var(--accent); margin:10px 0;">數值變動 (Effects)</summary>
                         
                         <div style="margin-bottom: 10px; background: ${isReset ? 'rgba(231, 76, 60, 0.1)' : '#252526'}; padding: 12px; border-radius: 6px; border: 1px solid ${isReset ? '#e74c3c' : '#444'}; display:flex; align-items:center; transition: all 0.3s;">
-                            
                             <label class="t-switch">
                                 <input type="checkbox" ${isReset ? 'checked' : ''} 
                                     onchange="updateChoiceProp('${sceneId}', ${idx}, 'isReset', this.checked); renderChoices('${sceneId}'); document.getElementById('details-${sceneId}-${idx}').open = true;">
@@ -534,12 +538,34 @@
                                 </div>
                             </div>
                         </div>
-
                         ${effectsHTML}
                     </details>
 
                     <details>
-                        <summary style="cursor:pointer; color:var(--accent); margin:10px 0;">出現條件 (Requirements)</summary>
+                        <summary style="cursor:pointer; color:var(--accent); margin:10px 0;">道具邏輯 (Items)</summary>
+                        <div style="background:#222; padding:10px;">
+                            <div class="form-group">
+                                <label>獲得道具 (Gain Items) - 輸入 ID，多個用逗號分隔</label>
+                                <input type="text" placeholder="例如: key, map" value="${(choice.gainItems||[]).join(',')}" 
+                                onchange="updateChoiceItems('${sceneId}', ${idx}, 'gainItems', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>消耗/移除道具 (Lose Items)</label>
+                                <input type="text" placeholder="例如: potion" value="${(choice.loseItems||[]).join(',')}" 
+                                onchange="updateChoiceItems('${sceneId}', ${idx}, 'loseItems', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>出現條件：需持有道具 (Require Item)</label>
+                                <select onchange="updateChoiceProp('${sceneId}', ${idx}, 'reqItem', this.value)">
+                                    <option value="">無</option>
+                                    ${(storyData.config.items||[]).map(i => `<option value="${i.id}" ${choice.reqItem===i.id?'selected':''}>${i.name} (${i.id})</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary style="cursor:pointer; color:var(--accent); margin:10px 0;">出現條件 (Stats Req)</summary>
                         <div class="row" style="align-items:center; background:#222; padding:10px;">
                             <select style="flex:1" onchange="updateChoiceReq('${sceneId}', ${idx}, 'stat', this.value)">
                                 <option value="">無條件</option>
@@ -647,6 +673,16 @@
         function addStatConfig() { storyData.config.stats.push({id:'new', name:'新數值', init:0, color:'#ffffff'}); renderStatConfigList(); }
         function removeStatConfig(idx) { storyData.config.stats.splice(idx, 1); renderStatConfigList(); }
 
+        // --- Items CRUD ---
+        function updateItemConfig(idx, field, val) { storyData.config.items[idx][field] = val; }
+        function addItemConfig() { 
+            if(!storyData.config.items) storyData.config.items = [];
+            storyData.config.items.push({id:'new_item', name:'新道具', desc:''}); 
+            renderItemConfigList(); 
+        }
+        function removeItemConfig(idx) { storyData.config.items.splice(idx, 1); renderItemConfigList(); }
+        // ------------------
+
         function updateSceneData(id, field, val) { storyData.scenes[id][field] = val; }
         function updateDialogues(id, val) { storyData.scenes[id].dialogues = val.split('\n').filter(l=>l); }
         function renameScene(oldId, newId) {
@@ -698,6 +734,15 @@
             renderChoices(sceneId);
         }
         function updateChoiceProp(sId, cIdx, field, val) { storyData.scenes[sId].choices[cIdx][field] = val; }
+        
+        // --- Choice Items Update Helper ---
+        function updateChoiceItems(sId, cIdx, field, valStr) {
+            const arr = valStr.split(',').map(s => s.trim()).filter(s => s);
+            if(arr.length === 0) delete storyData.scenes[sId].choices[cIdx][field];
+            else storyData.scenes[sId].choices[cIdx][field] = arr;
+        }
+        // ----------------------------------
+
         function updateChoiceEffect(sId, cIdx, statId, val) {
             val = parseInt(val);
             if(val === 0) delete storyData.scenes[sId].choices[cIdx].effects[statId];
@@ -754,6 +799,7 @@
                     if(!storyData.scenes) storyData.scenes = {};
                     if(!storyData.endings) storyData.endings = [];
                     if(!storyData.config) storyData.config = { stats: [] };
+                    if(!storyData.config.items) storyData.config.items = []; // 自動補上 items 陣列
                     alert("匯入成功！");
                     currentTab = 'scenes';
                     renderList();

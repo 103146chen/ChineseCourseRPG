@@ -161,6 +161,7 @@
         .percent-bar-fill { height: 100%; border-radius: 4px; background: var(--primary-color); }
         .code-block { background: #2d2d2d; color: #ccc; padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; }
         .reset-tag { font-size: 11px; background: #ff9800; color: white; padding: 1px 4px; border-radius: 3px; margin-left: 5px; }
+        .item-tag { font-size: 11px; background: #9b59b6; color: white; padding: 1px 4px; border-radius: 3px; margin-left: 3px; }
     </style>
 </head>
 <body>
@@ -243,6 +244,8 @@
                     scene.choices.forEach((c) => {
                         let label = c.text.split('：')[0].replace(/"/g, "'").substring(0, 12);
                         if(c.isReset) label += " ↻"; 
+                        // 簡單標示道具需求
+                        if(c.reqItem) label += " 🔒";
                         def += `${key} -->|"${label}"| ${c.nextScene}\n`;
                     });
                 }
@@ -333,7 +336,7 @@
         };
 
         // ==========================================
-        // 計算機邏輯 (支援 isReset)
+        // 計算機邏輯 (支援 Items & isReset)
         // ==========================================
         function calculateAllEndings() {
             if (!currentStoryData) { alert("請先載入 JSON"); return; }
@@ -341,22 +344,27 @@
             const initialStats = {};
             currentStoryData.config.stats.forEach(s => initialStats[s.id] = s.init);
             
-            function traverse(sceneId, currentStats, pathLog) {
+            const initialInventory = []; // 初始背包
+
+            function traverse(sceneId, currentStats, currentInventory, pathLog) {
                 if (sceneId === 'end_calc' || !currentStoryData.scenes[sceneId]) {
-                    results.push({ path: pathLog, stats: {...currentStats}, ending: determineEnding(currentStats) });
+                    results.push({ path: pathLog, stats: {...currentStats}, inventory: [...currentInventory], ending: determineEnding(currentStats) });
                     return;
                 }
                 const scene = currentStoryData.scenes[sceneId];
                 if (!scene.choices || scene.choices.length === 0) {
-                    results.push({ path: pathLog, stats: {...currentStats}, ending: determineEnding(currentStats) });
+                    results.push({ path: pathLog, stats: {...currentStats}, inventory: [...currentInventory], ending: determineEnding(currentStats) });
                     return;
                 }
                 scene.choices.forEach(choice => {
+                    // 1. 檢查數值條件
                     if (choice.req && !checkCondition(currentStats, choice.req)) return;
                     
+                    // 2. 檢查道具條件 (新增)
+                    if (choice.reqItem && !currentInventory.includes(choice.reqItem)) return;
+
+                    // 計算新數值
                     let nextStats;
-                    
-                    // 這裡就是重置邏輯
                     if (choice.isReset) {
                         nextStats = {};
                         currentStoryData.config.stats.forEach(s => {
@@ -372,14 +380,23 @@
                         }
                     }
 
+                    // 計算新道具 (新增)
+                    let nextInventory = [...currentInventory];
+                    if (choice.gainItems) {
+                        choice.gainItems.forEach(i => { if(!nextInventory.includes(i)) nextInventory.push(i); });
+                    }
+                    if (choice.loseItems) {
+                        nextInventory = nextInventory.filter(i => !choice.loseItems.includes(i));
+                    }
+
                     let choiceText = choice.text.split('：')[0].substring(0, 8);
                     if (choice.isReset) choiceText += "(重置)";
                     
-                    traverse(choice.nextScene, nextStats, [...pathLog, `${sceneId}→${choiceText}`]);
+                    traverse(choice.nextScene, nextStats, nextInventory, [...pathLog, `${sceneId}→${choiceText}`]);
                 });
             }
 
-            traverse('intro', initialStats, []);
+            traverse('intro', initialStats, initialInventory, []);
             lastCalculationResults = results;
             renderCalculatorUI();
         }
@@ -420,8 +437,13 @@
         }
 
         function renderPathsView() {
-            let html = `<table class="calc-table"><thead><tr><th width="40%">路徑</th><th width="30%">數值</th><th width="30%">結局</th></tr></thead><tbody>`;
-            lastCalculationResults.forEach(row => { let statHtml = Object.entries(row.stats).map(([k,v])=>`<span style="background:#eee; padding:2px 4px; border-radius:3px; margin-right:3px; font-size:11px;">${k}:${v}</span>`).join(''); html += `<tr><td style="font-family:monospace; font-size:12px;">${row.path.join(' ➔ ')}</td><td>${statHtml}</td><td style="color:${row.ending.color}; font-weight:bold;">${row.ending.title}</td></tr>`; });
+            let html = `<table class="calc-table"><thead><tr><th width="40%">路徑</th><th width="30%">最終狀態</th><th width="30%">結局</th></tr></thead><tbody>`;
+            lastCalculationResults.forEach(row => { 
+                let statHtml = Object.entries(row.stats).map(([k,v])=>`<span style="background:#eee; padding:2px 4px; border-radius:3px; margin-right:3px; font-size:11px;">${k}:${v}</span>`).join(''); 
+                let itemHtml = (row.inventory && row.inventory.length > 0) ? `<br><span style="font-size:11px; color:#9b59b6;">🎒 ${row.inventory.join(', ')}</span>` : '';
+                
+                html += `<tr><td style="font-family:monospace; font-size:12px;">${row.path.join(' ➔ ')}</td><td>${statHtml}${itemHtml}</td><td style="color:${row.ending.color}; font-weight:bold;">${row.ending.title}</td></tr>`; 
+            });
             html += `</tbody></table>`; document.getElementById('calcContent').innerHTML = html;
         }
 
@@ -430,7 +452,12 @@
             let html = `<div style="background:#f9f9f9; padding:10px;">${scene.dialogues.map(d=>`<p>${d}</p>`).join('')}</div>`; 
             if (scene.choices) html += `<h4>選項</h4>` + scene.choices.map(c=>`<div style="margin-bottom:5px; border-left:3px solid #4a90e2; padding-left:5px;">
                 ${c.text} ${c.isReset ? '<span class="reset-tag">數值重置</span>' : ''} → ${c.nextScene} 
-                <br><small style="color:green">${JSON.stringify(c.effects||{})}</small></div>`).join(''); 
+                <br>
+                ${c.reqItem ? `<small style="color:#e74c3c">🔒 需持有: ${c.reqItem}</small><br>` : ''}
+                ${c.gainItems ? `<small style="color:#27ae60">🎁 獲得: ${c.gainItems.join(',')}</small><br>` : ''}
+                ${c.loseItems ? `<small style="color:#e67e22">🗑️ 消耗: ${c.loseItems.join(',')}</small><br>` : ''}
+                <small style="color:green">數值: ${JSON.stringify(c.effects||{})}</small>
+                </div>`).join(''); 
             openModal(id, html); 
         }
         window.showEndingDetails = (id) => { const e = currentStoryData.endings.find(x => x.id === id); openModal(e.title, `<p>${e.desc}</p><blockquote>${e.quote}</blockquote><pre>${JSON.stringify(e.conditions)}</pre>`); }

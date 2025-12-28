@@ -1,0 +1,31 @@
+/* 背包按鈕 (放在紀錄按鈕旁邊) */
+#gadget-btn {
+    position: fixed; 
+    bottom: 10px; 
+    left: 110px; /* 稍微往右移，避開紀錄按鈕 */
+    z-index: 60;
+}
+
+/* 背包視窗容器 (沿用部分 backlog 樣式風格) */
+.gadget-container {
+    width: 90%; max-width: 500px; height: 70%;
+    background: rgba(30, 30, 35, 0.98);
+    border: 2px solid #d4af37; border-radius: 12px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    transform: scale(0.95); transition: transform 0.3s;
+}
+#gadget-overlay:not(.hidden) .gadget-container { transform: scale(1); }
+
+/* 背包列表 */
+.gadget-content { flex: 1; overflow-y: auto; padding: 20px; }
+
+/* 單個道具卡片 */
+.gadget-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #555; border-radius: 8px;
+    padding: 12px; margin-bottom: 10px;
+    display: flex; flex-direction: column; gap: 5px;
+}
+.gadget-name { color: #d4af37; font-weight: bold; font-size: 1.1rem; }
+.gadget-desc { color: #aaa; font-size: 0.9rem; }

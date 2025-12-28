@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="assets/css/exportHTML.css"> 
     <link rel="stylesheet" href="assets/css/FxVisualOverlay.css"> 
     <link rel="stylesheet" href="assets/css/baccklog.css"> 
+    <link rel="stylesheet" href="assets/css/gadget.css"> 
     <link rel="stylesheet" href="assets/css/debugMode.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -18,17 +19,30 @@
     <div class="game-window">
         <div id="game-bg" class="background-layer"></div>
         <div id="fx-overlay" class="fx-layer"></div>
+        
         <button id="backlog-btn" class="control-btn" onclick="toggleBacklog()" style="position: fixed; bottom: 10px; top: unset;">📖 紀錄</button>
+        <button id="gadget-btn" class="control-btn" onclick="toggleGadget()" style="position: fixed; bottom: 10px; top: unset;">🎒 背包</button>
+
         <div id="backlog-overlay" class="hidden">
             <div class="backlog-container">
                 <div class="backlog-header">
                     <span>📜 對話歷史紀錄</span>
                     <button class="close-btn" onclick="toggleBacklog()" style="margin: 0px; width: 32px; height: 32px; padding: 10px;">✕</button>
                 </div>
-                <div id="backlog-content" class="backlog-content">
+                <div id="backlog-content" class="backlog-content"></div>
+            </div>
+        </div>
+
+        <div id="gadget-overlay" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; display:flex; justify-content:center; align-items:center;">
+            <div class="gadget-container">
+                <div class="backlog-header"> <span>🎒 道具清單</span>
+                    <button class="close-btn" onclick="toggleGadget()" style="margin: 0px; width: 32px; height: 32px; padding: 10px;">✕</button>
+                </div>
+                <div id="gadget-list" class="gadget-content">
                     </div>
             </div>
         </div>
+
         <div class="stats-overlay"><div id="stats-container"></div></div>
         <div id="global-tooltip" class="global-tooltip hidden"></div>
         <div class="dialogue-container">
