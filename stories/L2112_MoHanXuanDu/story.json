@@ -1,0 +1,671 @@
+{
+    "config": {
+        "title": "公輸：墨守道義 (完整導演版)",
+        "stats": [
+            {
+                "id": "peace",
+                "name": "和平信念",
+                "init": 60,
+                "color": "#2ecc71",
+                "desc": "代表阻止戰爭的可能性與談判籌碼。若過低，楚王將無視你的請求。"
+            },
+            {
+                "id": "survival",
+                "name": "體力與生存",
+                "init": 80,
+                "color": "#e74c3c",
+                "desc": "主角墨子的體力與生命安全。歸零則旅途猝死或被殺害。"
+            },
+            {
+                "id": "logic",
+                "name": "辯才邏輯",
+                "init": 60,
+                "color": "#3498db",
+                "desc": "邏輯思辨能力。需要在辯論中層層遞進，數值高才能觸發關鍵對話。"
+            }
+        ]
+    },
+    "scenes": {
+        "intro": {
+            "bg": "images/mozi_school_autumn.jpg",
+            "bgm": "audio/windy_leaves.mp3",
+            "dialogues": [
+                "場景：魯國書院 | 時間：戰國初期",
+                "你是墨翟，人稱墨子。此刻，你正在魯國簡陋的書院中，為弟子講授「<span class='glossary' data-tip='墨家核心思想：無差別的博愛與反對侵略戰爭'>兼愛非攻</span>」之道。",
+                "窗外梧桐葉落，秋意蕭索，寒風捲起地上的枯葉，發出沙沙聲響。忽然，一名氣喘吁吁的信使闖入，打破了書院的寧靜。",
+                "信使帶來了令你心驚肉跳的消息——楚國公輸盤已為楚王造好雲梯，即將興師攻打宋國。",
+                "你環顧四周，弟子們稚嫩的臉龐上寫滿困惑。你知道，宋國國力孱弱，如風中殘燭，一旦楚國大軍壓境，必是<span class='glossary' data-tip='形容百姓處於極端困苦的境地'>生靈塗炭</span>。",
+                "你畢生倡導的「非攻」理念，此刻正面臨最嚴峻的考驗。手中的竹簡微微顫抖——你是該坐而論道，還是起而行之？",
+                "窗外烏鴉聒噪，彷彿不祥的預兆。你感到一股<span class='glossary' data-tip='形容極度不安，像芒刺刺在背上'>如芒在背</span>的壓力，時間緊迫如<span class='glossary' data-tip='比喻時間流逝極快'>白駒過隙</span>。"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】留在魯國，派遣弟子前往楚國遊說",
+                    "nextScene": "bridge_intro_A",
+                    "analysis": {
+                        "title": "言行不一",
+                        "status": "warning",
+                        "content": "保全自身安危，但說服力不足。墨家講究「知行合一」，僅派弟子前往恐難阻擋楚國大軍。"
+                    },
+                    "effects": { "survival": 10, "peace": -20 }
+                },
+                {
+                    "text": "【選項 B】立即啟程，親自趕往楚國郢都",
+                    "nextScene": "bridge_intro_B",
+                    "analysis": {
+                        "title": "墨者本色",
+                        "status": "success",
+                        "content": "展現身體力行的決心。路途雖險阻且耗時，但這是最具說服力的選擇。"
+                    },
+                    "effects": { "survival": -10, "peace": 10 }
+                },
+                {
+                    "text": "【選項 C】先派快馬通知宋國備戰，再從長計議",
+                    "nextScene": "bridge_intro_C",
+                    "analysis": {
+                        "title": "緩不濟急",
+                        "status": "info",
+                        "content": "爭取了時間，但可能錯失最佳遊說時機，戰爭仍不可避免。"
+                    },
+                    "effects": { "peace": -10 }
+                }
+            ]
+        },
+        "bridge_intro_A": {
+            "bg": "images/school_rain.jpg",
+            "dialogues": [
+                "你選擇留在書院，挑選了幾名能言善道的弟子前往楚國。",
+                "日子一天天過去，你每日在書院中焦急踱步，望著南方的天空。",
+                "然而，傳回來的消息卻令人絕望——弟子們連楚王的面都沒見到就被驅逐，楚軍已經發動了攻擊。",
+                "宋國城破，百姓流離失所。你手中的書卷落地，心中充滿了悔恨..."
+            ],
+            "choices": [
+                {
+                    "text": "悔之晚矣 (進入結局)",
+                    "nextScene": "end_calc",
+                    "isReset": true,
+                    "effects": { "peace": 0 }
+                }
+            ]
+        },
+        "bridge_intro_B": {
+            "bg": "images/road_start.jpg",
+            "dialogues": [
+                "你沒有片刻猶豫，立即整理行囊。你知道，這將是一場與時間的賽跑。",
+                "裂裳裹足，日夜兼程。你告別了擔憂的弟子，獨自踏上了前往楚國的漫漫長路。",
+                "前路漫漫，生死未卜，但你眼神堅定，義無反顧。"
+            ],
+            "choices": [
+                {
+                    "text": "開始長途跋涉",
+                    "nextScene": "scene_2_journey"
+                }
+            ]
+        },
+        "bridge_intro_C": {
+            "bg": "images/night_planning.jpg",
+            "dialogues": [
+                "你決定先通知宋國。快馬衝出書院，消失在夜色中。",
+                "你花了幾天時間籌備物資與策略。當你終於出發時，心中卻隱隱不安。",
+                "因為你的耽擱，楚國的備戰已經更加完善，這將使接下來的談判變得更加艱難。"
+            ],
+            "choices": [
+                {
+                    "text": "匆忙上路",
+                    "nextScene": "scene_2_journey",
+                    "effects": { "survival": -5, "peace": -10 }
+                }
+            ]
+        },
+        "scene_2_journey": {
+            "bg": "images/rough_road_night.jpg",
+            "bgm": "audio/tense_travel.mp3",
+            "fx": "blur",
+            "dialogues": [
+                "十日十夜，<span class='glossary' data-tip='形容旅途艱辛，在風中吃飯，露天睡覺'>風餐露宿</span>。草鞋磨破了三雙，腳底血泡累累。",
+                "在黃河渡口，你險些被盜匪劫掠；在荒野客棧，你徹夜難眠，耳邊只有淒厲的蟲鳴如泣。",
+                "同行送行的弟子禽滑厘見你形容枯槁，幾度勸你歇息，但你搖頭拒絕——每耽擱一刻，宋國百姓就多一分危險。",
+                "終於，郢都城牆在望。那高聳的城樓如<span class='glossary' data-tip='面目兇惡的野獸'>猙獰巨獸</span>，城門口楚國士兵戈矛林立，殺氣騰騰。",
+                "你整理破舊的葛布衣衫，深吸一口氣。守城士兵上下打量你這個風塵僕僕的外鄉人，眼神中盡是不屑。"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】直言不諱，聲稱要見公輸盤阻止雲梯",
+                    "nextScene": "bridge_scene2_A",
+                    "analysis": {
+                        "title": "過於剛直",
+                        "status": "warning",
+                        "content": "態度過於直接，被視為狂妄瘋子。雖然最後可能進去，但浪費了寶貴時間與體力。"
+                    },
+                    "effects": { "survival": -20, "logic": -5 }
+                },
+                {
+                    "text": "【選項 B】謊稱是來拜訪公輸盤的同行工匠",
+                    "nextScene": "bridge_scene2_B",
+                    "analysis": {
+                        "title": "權宜之計",
+                        "status": "info",
+                        "content": "能順利見到公輸盤，但有違墨家「誠信」原則，且謊言終會戳破，可能影響後續談判的信任度。"
+                    },
+                    "effects": { "peace": -5, "logic": -5 }
+                },
+                {
+                    "text": "【選項 C】據實以告，說明遠道而來有要事相商",
+                    "nextScene": "bridge_scene2_C",
+                    "analysis": {
+                        "title": "不卑不亢",
+                        "status": "success",
+                        "content": "符合墨者身份。雖然需要等待，但展現了氣度，為談判奠定了正當性。"
+                    },
+                    "effects": { "logic": 10 }
+                }
+            ]
+        },
+        "bridge_scene2_A": {
+            "bg": "images/gate_guard.jpg",
+            "dialogues": [
+                "你大聲說明來意，士兵們卻哄堂大笑。",
+                "「哪來的瘋子，想見公輸先生？」他們用槍桿將你推倒在地。",
+                "你在城門口受盡羞辱，最後趁著夜色混入城中運送木材的車隊，才勉強進城。",
+                "你的身體更加疲憊了，尊嚴也受到了打擊。"
+            ],
+            "choices": [{ "text": "忍痛進城", "nextScene": "scene_3_meeting" }]
+        },
+        "bridge_scene2_B": {
+            "bg": "images/city_street.jpg",
+            "dialogues": [
+                "你謊稱是公輸盤的舊識，士兵半信半疑地放行了。",
+                "雖然順利進城，但你心中卻有一絲愧疚。墨家講究誠信，這個開端似乎偏離了你的道。",
+                "你快步穿過繁華的郢都街道，直奔公輸盤的工坊。"
+            ],
+            "choices": [{ "text": "前往工坊", "nextScene": "scene_3_meeting" }]
+        },
+        "bridge_scene2_C": {
+            "bg": "images/gate_sunset.jpg",
+            "dialogues": [
+                "你平靜地說明身份與來意，雖然衣衫襤褸，但你的眼神中有種令人折服的光芒。",
+                "士兵們收起了輕視，雖然仍需通報等待，但他們沒有為難你。",
+                "你在城牆下靜坐調息，為即將到來的惡戰養精蓄銳。"
+            ],
+            "choices": [{ "text": "等待通傳", "nextScene": "scene_3_meeting" }]
+        },
+        "scene_3_meeting": {
+            "bg": "images/workshop.jpg",
+            "bgm": "audio/mechanical_sounds.mp3",
+            "dialogues": [
+                "你終於站在了公輸盤面前。這間工坊裡陳列著各式精巧機械，木屑飛揚。",
+                "公輸盤正在擦拭他新造的雲梯模型，透出一股得意之色。他抬頭看你，眼神疑惑：「夫子何命焉為？」語氣客氣，卻帶著高高在上的傲慢。",
+                "那座雲梯模型尤為醒目——高聳的木架，靈活的轉軸，彷彿已能看見它攻破城牆時的凶狠模樣。",
+                "你的心沉到谷底，但你想起了一個策略：試探他的道義底線。",
+                "你語出驚人：「北方有侮臣者，願借子殺之。」",
+                "公輸盤臉色微變，不悅之情溢於言表。你加碼道：「請獻十金。」",
+                "此言一出，公輸盤勃然作色：「吾義固不殺人！」",
+                "陷阱奏效了！他既然承認「義不殺人」，為何要造雲梯？"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】立即揭穿矛盾，指責他「義不殺少而殺眾」",
+                    "nextScene": "bridge_scene3_A",
+                    "analysis": {
+                        "title": "操之過急",
+                        "status": "warning",
+                        "content": "邏輯犀利，但過於激進。公輸盤惱羞成怒，可能直接將你趕出去，導致任務失敗。"
+                    },
+                    "effects": { "peace": -20, "logic": -10 }
+                },
+                {
+                    "text": "【選項 B】先恭維他的才能，再委婉勸說",
+                    "nextScene": "bridge_scene3_B",
+                    "analysis": {
+                        "title": "軟弱無力",
+                        "status": "info",
+                        "content": "態度溫和，但可能顯得軟弱，無法觸動其內心。公輸盤只會覺得你是個迂腐的書生。"
+                    },
+                    "effects": { "logic": -5 }
+                },
+                {
+                    "text": "【選項 C】循序漸進，先分析攻宋之「五不可謂」",
+                    "nextScene": "bridge_scene3_C",
+                    "analysis": {
+                        "title": "層層推進",
+                        "status": "success",
+                        "content": "這正是墨子的經典辯術。先鋪墊邏輯，再一針見血，讓對方無路可退。"
+                    },
+                    "effects": { "logic": 20, "peace": 10 }
+                }
+            ]
+        },
+        "bridge_scene3_A": {
+            "bg": "images/workshop_angry.jpg",
+            "dialogues": [
+                "你大聲喝道：「公輸盤！你說義不殺人，卻要幫楚國殺宋國無數百姓，這算什麼義？」",
+                "公輸盤臉色漲紅，重重地摔下手中的工具。",
+                "「大膽狂徒！軍國大事豈是你這山野村夫能懂的？送客！」",
+                "幾名壯漢上前將你架起，你拼命掙扎，大喊道義，卻被無情地丟出了工坊..."
+            ],
+            "choices": [{ "text": "談判破裂 (進入失敗結局)", "nextScene": "end_calc", "isReset": true, "effects": { "peace": 0 } }]
+        },
+        "bridge_scene3_B": {
+            "bg": "images/workshop.jpg",
+            "dialogues": [
+                "你試圖緩和氣氛，稱讚雲梯的精巧。公輸盤得意洋洋，滔滔不絕地介紹起來。",
+                "每當你試圖將話題轉向和平，他便顧左右而言他。",
+                "時間一分一秒過去，你發現自己完全被他牽著鼻子走，根本無法切入正題。",
+                "最後，公輸盤打哈欠送客，你的遊說徹底失敗。"
+            ],
+            "choices": [{ "text": "無功而返 (進入失敗結局)", "nextScene": "end_calc", "isReset": true, "effects": { "peace": 10 } }]
+        },
+        "bridge_scene3_C": {
+            "bg": "images/workshop_tense.jpg",
+            "dialogues": [
+                "你沒有急著攻擊，而是起身再拜，語氣轉為懇切而鏗鏘。",
+                "「請說之。吾從北方聞子為梯，將以攻宋。宋何罪之有？」",
+                "你一步步列舉楚國之過，聲音在工坊中迴盪，每一個字都如重錘敲擊。",
+                "公輸盤的臉色由紅轉白，額頭冷汗涔涔而下。他幾度張口欲辯，卻發現自己無言以對。"
+            ],
+            "choices": [{ "text": "乘勝追擊", "nextScene": "scene_4_debate" }]
+        },
+        "scene_4_debate": {
+            "bg": "images/workshop_dark.jpg",
+            "dialogues": [
+                "你列舉了五個「不可謂」：不智、不仁、不忠、不強、不知類。",
+                "如連珠炮般的邏輯轟炸下，公輸盤終於低下頭，艱難地吐出一個字：「服。」",
+                "但你知道，這只是第一步。公輸盤雖然「服」了，卻立刻推卸責任：",
+                "「不可，吾既已言之王矣。」他把皮球踢給了楚王——真正的決策者。",
+                "你的心中燃起一絲希望，同時也湧起更大的焦慮。這位雄踞一方的楚王，比工匠更難對付。"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】要求公輸盤立即帶你去見楚王",
+                    "nextScene": "bridge_scene4_A",
+                    "analysis": {
+                        "title": "趁熱打鐵",
+                        "status": "success",
+                        "content": "時機把握得當。利用公輸盤此刻的愧疚與理虧，迫使他引薦。"
+                    },
+                    "effects": { "logic": 10 }
+                },
+                {
+                    "text": "【選項 B】先回客棧整理思路，改日再戰",
+                    "nextScene": "bridge_scene4_B",
+                    "analysis": {
+                        "title": "錯失良機",
+                        "status": "warning",
+                        "content": "準備雖然重要，但給了公輸盤反悔或通風報信的時間。兵貴神速。"
+                    },
+                    "effects": { "survival": 10, "peace": -10 }
+                },
+                {
+                    "text": "【選項 C】強迫公輸盤當場發誓不再造雲梯",
+                    "nextScene": "bridge_scene4_C",
+                    "analysis": {
+                        "title": "弄巧成拙",
+                        "status": "warning",
+                        "content": "逼人太甚只會招致反感。公輸盤雖理虧，但畢竟是楚國重臣，強迫發誓可能導致他惱羞成怒。"
+                    },
+                    "effects": { "logic": -5, "peace": -5 }
+                }
+            ]
+        },
+        "bridge_scene4_A": {
+            "bg": "images/palace_outside.jpg",
+            "dialogues": [
+                "你抓住機會，堅持要見楚王。公輸盤理虧，只能勉強答應。",
+                "他帶著你穿過重重宮門。楚國王宮金碧輝煌，與你身上的破衣爛衫形成鮮明對比。",
+                "你沒有絲毫畏懼，因為你心中裝著的是天下蒼生。"
+            ],
+            "choices": [{ "text": "步入大殿", "nextScene": "scene_5_king" }]
+        },
+        "bridge_scene4_B": {
+            "bg": "images/inn_night.jpg",
+            "dialogues": [
+                "你選擇暫退一步。然而當晚，公輸盤向楚王進言，說有個魯國人來搗亂。",
+                "第二天，當你再次來到宮門前時，迎接你的不是引薦，而是冰冷的長戟。",
+                "你錯過了唯一的機會。"
+            ],
+            "choices": [{ "text": "懊悔不已 (進入失敗結局)", "nextScene": "end_calc", "isReset": true, "effects": { "peace": 0 } }]
+        },
+        "bridge_scene4_C": {
+            "bg": "images/workshop_conflict.jpg",
+            "dialogues": [
+                "你步步進逼，要求公輸盤發毒誓。公輸盤的羞愧轉為了憤怒。",
+                "「先生未免欺人太甚！」他拂袖而去，不再理會你。",
+                "你被工匠們趕了出來，連見楚王的機會都沒有了。"
+            ],
+            "choices": [{ "text": "欲速不達 (進入失敗結局)", "nextScene": "end_calc", "isReset": true, "effects": { "peace": 0 } }]
+        },
+        "scene_5_king": {
+            "bg": "images/palace_throne.jpg",
+            "bgm": "audio/court_drum.mp3",
+            "dialogues": [
+                "楚王高坐於殿上，<span class='glossary' data-tip='古代帝王穿的禮服，象徵權力'>袞衣</span>加身，威儀赫赫。",
+                "你站在殿下，感到一股<span class='glossary' data-tip='比喻壓力巨大'>泰山壓頂</span>般的壓迫感。周圍文武百官竊竊私語，甚至有人冷笑。",
+                "但你已無路可退。你深吸一口氣，拋出了那個經典的比喻：",
+                "「今有人於此，舍其文軒，鄰有<span class='glossary' data-tip='破舊的車子'>敝輿</span>而欲竊之；舍其錦繡，鄰有短褐而欲竊之...此為何若人？」",
+                "楚王中計，脫口而出：「必為有竊疾矣。」",
+                "你立即指出楚國攻宋正如富人竊窮人。楚王沉默了，但他眼中的野心並未熄滅。",
+                "「善哉！雖然，公輸盤為我為雲梯，必取宋。」楚王把難題又拋回來了——靠嘴說不動，得看實力。"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】繼續陳述道義，痛陳攻宋之害",
+                    "nextScene": "bridge_scene5_A",
+                    "analysis": {
+                        "title": "對牛彈琴",
+                        "status": "warning",
+                        "content": "在絕對的權力與貪婪面前，單純的道德說教已經無效。楚王已經承認了不義，但他不在乎，他要的是勝利。"
+                    },
+                    "effects": { "survival": -10, "peace": -10 }
+                },
+                {
+                    "text": "【選項 B】請求當場與公輸盤進行攻防演練",
+                    "nextScene": "bridge_scene5_B",
+                    "analysis": {
+                        "title": "實踐出真知",
+                        "status": "success",
+                        "content": "既然道理講不通，就用實力說話。這是打破僵局的唯一辦法，也是墨家「重實踐」的體現。"
+                    },
+                    "effects": { "logic": 15, "peace": 10 }
+                },
+                {
+                    "text": "【選項 C】暫時退讓，表示願意再想辦法",
+                    "nextScene": "bridge_scene5_C",
+                    "analysis": {
+                        "title": "自斷後路",
+                        "status": "warning",
+                        "content": "此時退讓，楚王會認為你技窮，立刻下令攻宋。"
+                    },
+                    "effects": { "peace": -20 }
+                }
+            ]
+        },
+        "bridge_scene5_A": {
+            "bg": "images/palace_angry.jpg",
+            "dialogues": [
+                "你不甘心地繼續宣講仁義道德。楚王聽得不耐煩了，揮了揮手。",
+                "「先生累了，帶下去休息吧。」",
+                "兩名武士上前，將你「請」出了大殿。你知道，戰爭的號角即將吹響。"
+            ],
+            "choices": [{ "text": "無力回天 (進入失敗結局)", "nextScene": "end_calc", "isReset": true, "effects": { "peace": 0 } }]
+        },
+        "bridge_scene5_B": {
+            "bg": "images/palace_prepare.jpg",
+            "dialogues": [
+                "你解下腰帶，放在殿上圍成一圈作為城牆，又取出隨身攜帶的木片作為器械。",
+                "公輸盤見狀，輕蔑一笑，也拿出了他的模型。",
+                "楚王饒有興致地俯身觀看。一場決定千百人性命的沙盤推演，即將開始。"
+            ],
+            "choices": [{ "text": "開始對決", "nextScene": "scene_6_simulation" }]
+        },
+        "bridge_scene5_C": {
+            "bg": "images/palace_cold.jpg",
+            "dialogues": [
+                "你猶豫了，表示需要再思考。楚王冷笑一聲：「看來墨家也不過如此。」",
+                "他轉頭對公輸盤說：「明日發兵。」",
+                "你癱軟在殿上，眼睜睜看著機會溜走。"
+            ],
+            "choices": [{ "text": "徹底失敗 (進入失敗結局)", "nextScene": "end_calc", "isReset": true, "effects": { "peace": 0 } }]
+        },
+        "scene_6_simulation": {
+            "bg": "images/wargame.jpg",
+            "bgm": "audio/battle_drums_fast.mp3",
+            "fx": "shake",
+            "dialogues": [
+                "大殿之上，氣氛凝重。公輸盤率先發動攻擊，模擬雲梯架設，試圖翻越你的「腰帶城牆」。",
+                "你立即調動<span class='glossary' data-tip='防禦城市的器械'>守圉之器</span>，用木片模擬滾木礌石，將雲梯推倒。",
+                "公輸盤變換戰術，從側翼進攻；你又用「牒」模擬拒馬，封堵缺口。",
+                "一次、兩次、三次...九次！公輸盤用盡了所有的攻城機變，你的防禦仍然綽綽有餘。",
+                "大殿上響起了驚嘆聲，楚王的表情從輕鬆變為凝重。",
+                "公輸盤攻城之械盡，而你的守圉之術尚有餘。他臉色鐵青，咬牙切齒道：「吾知所以距子矣，吾不言。」",
+                "你的心中警鐘大作——從他的眼神中，你讀出了赤裸裸的殺意。"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】立即揭穿其陰謀，指出他想殺你",
+                    "nextScene": "bridge_scene6_A",
+                    "analysis": {
+                        "title": "直面殺機",
+                        "status": "info",
+                        "content": "先發制人揭穿陰謀，雖然勇氣可嘉，但也讓場面瞬間失控，若無後手，楚王可能順水推舟殺了你。"
+                    },
+                    "effects": { "survival": -20, "logic": 10 }
+                },
+                {
+                    "text": "【選項 B】故作不知，等他說出口再反擊",
+                    "nextScene": "bridge_scene6_B",
+                    "analysis": {
+                        "title": "被動挨打",
+                        "status": "warning",
+                        "content": "這時候沉默就是死亡。一旦楚王動了殺念，你就再無開口的機會。"
+                    },
+                    "effects": { "survival": -50 }
+                },
+                {
+                    "text": "【選項 C】立即亮出底牌，告知弟子已在宋國",
+                    "nextScene": "bridge_scene6_C",
+                    "analysis": {
+                        "title": "殺手鐧",
+                        "status": "success",
+                        "content": "這是最關鍵的一步。徹底打消了對方殺你滅口的念頭，用絕對的實力逼迫對方放棄。"
+                    },
+                    "effects": { "peace": 30, "survival": 20 }
+                }
+            ]
+        },
+        "bridge_scene6_A": {
+            "bg": "images/palace_danger.jpg",
+            "dialogues": [
+                "你大聲道：「公輸盤不過是想殺了我！以為殺了我，宋國就無人能守！」",
+                "這層窗戶紙被捅破，殿上氣氛降至冰點。楚王眼中閃過一絲猶豫，手按在了劍柄上。",
+                "生死只在一線之間，你必須立刻拋出最後的籌碼！"
+            ],
+            "choices": [{ "text": "亮出底牌", "nextScene": "scene_7_final" }]
+        },
+        "bridge_scene6_B": {
+            "bg": "images/palace_death.jpg",
+            "dialogues": [
+                "你選擇沉默。公輸盤見狀，立即向楚王進言：「大王，此人是宋國唯一的屏障，殺了他，宋國必破！」",
+                "楚王點了點頭，揮手示意。刀光一閃...",
+                "你倒在了大殿之上，帶著未竟的理想。"
+            ],
+            "choices": [{ "text": "壯志未酬 (進入悲劇結局)", "nextScene": "end_calc", "isReset": true, "effects": { "survival": 0 } }]
+        },
+        "bridge_scene6_C": {
+            "bg": "images/palace_victory.jpg",
+            "fx": "flash-white",
+            "dialogues": [
+                "你平靜地看著公輸盤，語氣淡然卻充滿力量：「吾知子之所以距我，吾不言。」",
+                "楚王問故，你轉向楚王，一字一句道出真相。",
+                "你的聲音不大，卻如雷霆般在殿上炸響。"
+            ],
+            "choices": [{ "text": "宣告勝利", "nextScene": "scene_7_final" }]
+        },
+        "scene_7_final": {
+            "bg": "images/palace_victory.jpg",
+            "bgm": "audio/resolution.mp3",
+            "dialogues": [
+                "「公輸子之意，不過欲殺臣。殺臣，宋莫能守，乃可攻也。然——」",
+                "你停頓片刻，讓懸念凝固於空氣中，「然臣之弟子禽滑厘等三百人，已持臣守圉之器，在宋城上而待楚寇矣。雖殺臣，不能絕也！」",
+                "此言一出，殿上一片譁然。公輸盤的臉色慘白，楚王的眼神中閃過一絲震驚與忌憚。",
+                "你知道，這是你最後的<span class='glossary' data-tip='比喻絕招或最後的王牌'>殺手鐧</span>。三百名訓練有素的墨家弟子，配合先進器械，足以讓楚國付出慘重代價。",
+                "楚王沉默良久，殿內靜得落針可聞。終於，他嘆了口氣：「善哉。吾請無攻宋矣。」",
+                "你成功了！但你並未露出喜色，只是恭敬一拜：「大王聖明。」"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】立即告辭，趕往宋國確認",
+                    "nextScene": "bridge_scene7_A",
+                    "analysis": {
+                        "title": "功成身退",
+                        "status": "success",
+                        "content": "任務完成，不宜久留。這符合墨家「功成不必在我」的低調作風。"
+                    },
+                    "effects": { "peace": 10, "survival": 10 }
+                },
+                {
+                    "text": "【選項 B】留下來，與楚王深入探討「非攻」",
+                    "nextScene": "bridge_scene7_B",
+                    "analysis": {
+                        "title": "過猶不及",
+                        "status": "warning",
+                        "content": "楚王雖然答應不攻宋，但他並非真心信奉非攻。繼續說教可能引起反感，甚至招來殺身之禍。"
+                    },
+                    "effects": { "survival": -10, "peace": 5 }
+                },
+                {
+                    "text": "【選項 C】建議派使者與宋國建立友好關係",
+                    "nextScene": "bridge_scene7_C",
+                    "analysis": {
+                        "title": "政治智慧",
+                        "status": "success",
+                        "content": "不僅止戰，更尋求互利共贏。這展現了超越單純防禦的政治遠見，鞏固了和平成果。"
+                    },
+                    "effects": { "peace": 20, "logic": 10 }
+                }
+            ]
+        },
+        "bridge_scene7_A": {
+            "bg": "images/palace_leave.jpg",
+            "dialogues": [
+                "你再次行禮，轉身離開了大殿。",
+                "走出宮門的那一刻，陽光刺眼，你感到一陣暈眩——那是連日奔波與高度緊張後的虛脫。",
+                "但你不能倒下，你必須立刻回宋國，告訴大家危機已解。"
+            ],
+            "choices": [{ "text": "踏上歸途", "nextScene": "scene_8_return" }]
+        },
+        "bridge_scene7_B": {
+            "bg": "images/palace_night.jpg",
+            "dialogues": [
+                "你試圖繼續感化楚王，但他已經顯得不耐煩。",
+                "「先生今日累了，改日再議。」楚王冷冷地說。",
+                "你在驛館中被軟禁了數日，直到確認宋國已有防備，楚王才放你離開。",
+                "雖然保住了性命，但你感到楚王對墨家的敵意更深了。"
+            ],
+            "choices": [{ "text": "無奈歸去", "nextScene": "scene_8_return", "effects": { "survival": -10 } }]
+        },
+        "bridge_scene7_C": {
+            "bg": "images/palace_talk.jpg",
+            "dialogues": [
+                "你建議楚王化干戈為玉帛，通商互利。楚王思考片刻，點頭稱是。",
+                "「先生之言，確有幾分道理。」",
+                "你帶著楚王的承諾離開，這場外交勝利比預想的更加完美。"
+            ],
+            "choices": [{ "text": "榮耀歸途", "nextScene": "scene_8_return" }]
+        },
+        "scene_8_return": {
+            "bg": "images/city_gate_rain.jpg",
+            "bgm": "audio/rain_mood.mp3",
+            "fx": "blur",
+            "dialogues": [
+                "你踏上歸途，途經宋國城門。天色陰沉，細雨霏霏，你渾身濕透，疲憊不堪。",
+                "你成功阻止了一場戰爭，拯救了無數生命，但心中卻沒有預期的喜悅，反而湧起一股深深的疲憊。",
+                "你想找個地方避雨，便走到城門口的閭門下。",
+                "守門的士兵打量著你這個形容枯槁、衣衫襤褸的過客，眼神中沒有半分敬意，只有冷漠與嫌棄。",
+                "你試圖說明來意，說自己剛從楚國歸來，阻止了楚國攻宋。",
+                "守門人冷笑：「就憑你？騙子！走開，別在這裡礙事！」",
+                "你被拒之門外，只能冒雨前行。雨水混著淚水滑落，你心中百味雜陳。"
+            ],
+            "choices": [
+                {
+                    "text": "【選項 A】憤而離去，感嘆世態炎涼",
+                    "nextScene": "end_calc",
+                    "analysis": {
+                        "title": "凡人之心",
+                        "status": "info",
+                        "content": "這是正常人的反應。但墨子之所以為聖賢，正因為他能超越這種個人的榮辱感。"
+                    },
+                    "effects": { "peace": -5 }
+                },
+                {
+                    "text": "【選項 B】依然堅定，告訴自己：功成不必在我",
+                    "nextScene": "scene_9_reflection",
+                    "analysis": {
+                        "title": "聖賢境界",
+                        "status": "success",
+                        "content": "「治於神者，眾人不知其功」。你不在乎世人的誤解，因為你知道自己做的是對的事。這才是真正的墨者精神。"
+                    },
+                    "effects": { "peace": 20, "survival": 5 }
+                },
+                {
+                    "text": "【選項 C】向守門人詳細解釋事情經過",
+                    "nextScene": "bridge_scene8_C",
+                    "analysis": {
+                        "title": "徒增屈辱",
+                        "status": "warning",
+                        "content": "在那個看重身份地位的時代，一介布衣的解釋只會被視為瘋言瘋語。"
+                    },
+                    "effects": { "survival": -5 }
+                }
+            ]
+        },
+        "bridge_scene8_C": {
+            "bg": "images/muddy_ground.jpg",
+            "dialogues": [
+                "你試圖解釋，卻被士兵推倒在泥水中。",
+                "「還敢頂嘴？滾！」",
+                "你狼狽地爬起來，在眾人的嘲笑聲中離開。",
+                "這就是現實。英雄往往是孤獨的，尤其是那些在幕後默默守護的人。"
+            ],
+            "choices": [{ "text": "默默承受 (進入結局)", "nextScene": "end_calc", "isReset": true }]
+        },
+        "scene_9_reflection": {
+            "bg": "images/mozi_old.jpg",
+            "bgm": "audio/memory_theme.mp3",
+            "dialogues": [
+                "多年後，你已垂垂老矣，鬚髮皆白。",
+                "禽滑厘問你：「夫子，您當年只身赴楚，難道就不怕嗎？」",
+                "你望向遠方：「怕。怎能不怕？怕楚王震怒，怕理想只是<span class='glossary' data-tip='比喻虛幻不實的事物'>鏡花水月</span>...」",
+                "「但若因為怕，就坐視生靈塗炭，那我畢生所信，又有何意義？」",
+                "「真正的勇氣，不是舉劍殺敵，而是在絕望中依然堅守信念；真正的智慧，不是巧言令色，而是用實力支撐道義。」",
+                "窗外，夕陽西下，晚霞如血。你的故事，將會流傳下去嗎？"
+            ],
+            "choices": [
+                {
+                    "text": "查看歷史評價",
+                    "nextScene": "end_calc"
+                }
+            ]
+        }
+    },
+    "endings": [
+        {
+            "id": "end_tragic",
+            "title": "悲劇英雄：出師未捷",
+            "priority": 100,
+            "conditions": [
+                { "stat": "survival", "op": "<=", "val": 0 }
+            ],
+            "image": "images/end_grave.jpg",
+            "desc": "你在旅途中耗盡了體力，或是死於楚王的劍下。你的理想崇高，但未能跨越時代的殘酷。「志不強者智不達」，這是一個令人扼腕的悲劇。"
+        },
+        {
+            "id": "end_failure",
+            "title": "歷史遺憾：戰火燎原",
+            "priority": 60,
+            "conditions": [
+                { "stat": "peace", "op": "<", "val": 50 }
+            ],
+            "image": "images/end_war.jpg",
+            "desc": "儘管你付出了努力，但楚國最終還是攻打了宋國。宋國城破，生靈塗炭。你站在廢墟上，感到深深的無力。也許，一個人的力量終究是有限的。"
+        },
+        {
+            "id": "end_sage",
+            "title": "千古聖賢：墨子顯學",
+            "priority": 50,
+            "conditions": [
+                { "stat": "peace", "op": ">=", "val": 80 },
+                { "stat": "logic", "op": ">=", "val": 70 }
+            ],
+            "image": "images/end_sage.jpg",
+            "desc": "【完美結局】你不僅阻止了戰爭，更以行動踐行了信念。千年之後，一位少年讀到你的故事，寫下：「治於神者，眾人不知其功——但歷史會記住。」你的精神超越了時空，成為永恆的座標。"
+        },
+        {
+            "id": "end_normal",
+            "title": "止戰之士：默默守護",
+            "priority": 10,
+            "conditions": [],
+            "image": "images/end_rain.jpg",
+            "desc": "你成功阻止了戰爭。雖然在歸途中被宋國守門人驅趕，嘗盡世態炎涼，但你知道，這一切都是值得的。你用一生證明：道義不是空談，和平需要捍衛。"
+        }
+    ]
+}
