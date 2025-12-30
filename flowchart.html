@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>互動故事設計師 (完美整合版)</title>
+    <title>互動故事設計師 (循環偵測版)</title>
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
         mermaid.initialize({ 
@@ -17,11 +17,11 @@
                 fontFamily: 'Segoe UI'
             },
             flowchart: {
-                useMaxWidth: false, // 禁止縮放以適應容器
+                useMaxWidth: false,
                 htmlLabels: true,
                 curve: 'basis',
-                nodeSpacing: 50,    // 節點間距 (大圖優化)
-                rankSpacing: 80     // 層級間距 (大圖優化)
+                nodeSpacing: 50,
+                rankSpacing: 80
             }
         });
         window.mermaid = mermaid;
@@ -90,7 +90,7 @@
             resize: none; font-family: 'Consolas', monospace; font-size: 12px; box-sizing: border-box;
         }
 
-        /* --- 主畫布 (Infinite Canvas) --- */
+        /* --- 主畫布 --- */
         .main-content {
             flex-grow: 1; position: relative; background: #eef1f5; overflow: hidden; cursor: grab;
         }
@@ -110,23 +110,12 @@
             pointer-events: auto;
         }
 
-        /* ========================================= */
-        /* 強制設定 Mermaid 節點樣式 (防止文字被切) */
-        /* ========================================= */
-        #graphDiv .node foreignObject {
-            overflow: visible !important;
-        }
-        
+        #graphDiv .node foreignObject { overflow: visible !important; }
         #graphDiv .node foreignObject div {
-            white-space: normal !important;   /* 允許換行 */
-            word-wrap: break-word !important; /* 長單字換行 */
-            min-width: 150px !important;      /* 最小寬度 */
-            max-width: 300px !important;      /* 最大寬度 */
-            padding: 8px !important;
-            text-align: center !important;
-            line-height: 1.4 !important;
+            white-space: normal !important; word-wrap: break-word !important;
+            min-width: 150px !important; max-width: 300px !important;
+            padding: 8px !important; text-align: center !important; line-height: 1.4 !important;
         }
-        
         .edgeLabel { background-color: white !important; padding: 2px; border-radius: 4px; opacity: 0.9; }
 
         /* --- 工具列 --- */
@@ -159,7 +148,6 @@
         .calc-table th, .calc-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
         .calc-table th { background: #f8f9fa; position: sticky; top: 0; }
         .percent-bar-fill { height: 100%; border-radius: 4px; background: var(--primary-color); }
-        .code-block { background: #2d2d2d; color: #ccc; padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; }
         .reset-tag { font-size: 11px; background: #ff9800; color: white; padding: 1px 4px; border-radius: 3px; margin-left: 5px; }
     </style>
 </head>
@@ -231,7 +219,6 @@
             const endings = storyData.endings || [];
 
             for (const [key, scene] of Object.entries(scenes)) {
-                // 放寬字數限制到 20 字，配合 CSS 換行
                 let text = (scene.dialogues && scene.dialogues[0]) ? scene.dialogues[0].replace(/<[^>]*>?/gm, '').substring(0, 20) : "無對白";
                 if(scene.dialogues && scene.dialogues[0].length > 20) text += "...";
 
@@ -243,6 +230,7 @@
                     scene.choices.forEach((c) => {
                         let label = c.text.split('：')[0].replace(/"/g, "'").substring(0, 12);
                         if(c.isReset) label += " ↻"; 
+                        if(c.reqItem) label += " 🔒";
                         def += `${key} -->|"${label}"| ${c.nextScene}\n`;
                     });
                 }
@@ -268,7 +256,22 @@
                 graphDiv.removeAttribute('data-processed');
                 graphDiv.innerHTML = syntax;
                 await window.mermaid.run({ nodes: [graphDiv] });
-                setTimeout(() => resetView(true), 100);
+                
+                // [CSS Fix] 延遲執行 JS 強制樣式修正 (修復重繪後文字跑版)
+                setTimeout(() => {
+                    const nodes = document.querySelectorAll('#graphDiv .node foreignObject div');
+                    nodes.forEach(div => {
+                        div.style.whiteSpace = 'normal';
+                        div.style.wordWrap = 'break-word';
+                        div.style.maxWidth = '250px';
+                        div.style.textAlign = 'center';
+                        div.style.display = 'flex';
+                        div.style.justifyContent = 'center';
+                        div.style.alignItems = 'center';
+                    });
+                    resetView(true);
+                }, 100);
+
             } catch (e) {
                 document.getElementById('errorMsg').innerText = e.message;
             }
@@ -333,7 +336,7 @@
         };
 
         // ==========================================
-        // 計算機邏輯 (支援 isReset)
+        // 計算機邏輯 (狀態基礎循環偵測 - 支援道具回溯)
         // ==========================================
         function calculateAllEndings() {
             if (!currentStoryData) { alert("請先載入 JSON"); return; }
@@ -341,22 +344,61 @@
             const initialStats = {};
             currentStoryData.config.stats.forEach(s => initialStats[s.id] = s.init);
             
-            function traverse(sceneId, currentStats, pathLog) {
+            const initialInventory = []; 
+
+            // 輔助函式：產生狀態指紋 (Scene ID + 道具清單)
+            function getStateKey(sceneId, inventory) {
+                const invStr = [...inventory].sort().join(',');
+                return `${sceneId}|[${invStr}]`;
+            }
+
+            // 參數 visitedStates: 記錄走過的「狀態指紋」(而不僅是場景ID)
+            function traverse(sceneId, currentStats, currentInventory, pathLog, visitedStates) {
+                
                 if (sceneId === 'end_calc' || !currentStoryData.scenes[sceneId]) {
-                    results.push({ path: pathLog, stats: {...currentStats}, ending: determineEnding(currentStats) });
+                    results.push({ path: pathLog, stats: {...currentStats}, inventory: [...currentInventory], ending: determineEnding(currentStats) });
                     return;
                 }
+                
                 const scene = currentStoryData.scenes[sceneId];
                 if (!scene.choices || scene.choices.length === 0) {
-                    results.push({ path: pathLog, stats: {...currentStats}, ending: determineEnding(currentStats) });
+                    results.push({ path: pathLog, stats: {...currentStats}, inventory: [...currentInventory], ending: determineEnding(currentStats) });
                     return;
                 }
+
                 scene.choices.forEach(choice => {
+                    // 1. 條件檢查 (包含道具)
                     if (choice.req && !checkCondition(currentStats, choice.req)) return;
                     
-                    let nextStats;
+                    // [道具檢查點] 確保如果沒道具，這條路根本不能走
+                    if (choice.reqItem && !currentInventory.includes(choice.reqItem)) return;
+
+                    // 2. 預先計算「下一步的狀態」
+                    let nextInventory = [...currentInventory];
+                    if (choice.gainItems) {
+                        choice.gainItems.forEach(i => { if(!nextInventory.includes(i)) nextInventory.push(i); });
+                    }
+                    if (choice.loseItems) {
+                        nextInventory = nextInventory.filter(i => !choice.loseItems.includes(i));
+                    }
                     
-                    // 這裡就是重置邏輯
+                    // [重點邏輯] 產生下一步的狀態指紋 (場景 + 新背包)
+                    const nextStateKey = getStateKey(choice.nextScene, nextInventory);
+
+                    // 3. [狀態基礎循環偵測] 
+                    // 只有當「下一個房間」且「背包內容完全一樣」的狀況發生過，才視為死循環
+                    if (visitedStates.includes(nextStateKey)) {
+                        results.push({
+                            path: [...pathLog, `${sceneId}→${choice.text} (循環)`],
+                            stats: {...currentStats},
+                            inventory: [...currentInventory],
+                            ending: { title: "⛔ 循環中止", id: "loop_detected", color: "#95a5a6" }
+                        });
+                        return;
+                    }
+
+                    // 計算新數值
+                    let nextStats;
                     if (choice.isReset) {
                         nextStats = {};
                         currentStoryData.config.stats.forEach(s => {
@@ -375,11 +417,21 @@
                     let choiceText = choice.text.split('：')[0].substring(0, 8);
                     if (choice.isReset) choiceText += "(重置)";
                     
-                    traverse(choice.nextScene, nextStats, [...pathLog, `${sceneId}→${choiceText}`]);
+                    // 遞迴呼叫：將新的狀態指紋加入 visitedStates
+                    traverse(
+                        choice.nextScene, 
+                        nextStats, 
+                        nextInventory, 
+                        [...pathLog, `${sceneId}→${choiceText}`], 
+                        [...visitedStates, nextStateKey]
+                    );
                 });
             }
 
-            traverse('intro', initialStats, []);
+            // 初始狀態指紋
+            const initialKey = getStateKey('intro', initialInventory);
+            traverse('intro', initialStats, initialInventory, [], [initialKey]);
+            
             lastCalculationResults = results;
             renderCalculatorUI();
         }
@@ -420,8 +472,15 @@
         }
 
         function renderPathsView() {
-            let html = `<table class="calc-table"><thead><tr><th width="40%">路徑</th><th width="30%">數值</th><th width="30%">結局</th></tr></thead><tbody>`;
-            lastCalculationResults.forEach(row => { let statHtml = Object.entries(row.stats).map(([k,v])=>`<span style="background:#eee; padding:2px 4px; border-radius:3px; margin-right:3px; font-size:11px;">${k}:${v}</span>`).join(''); html += `<tr><td style="font-family:monospace; font-size:12px;">${row.path.join(' ➔ ')}</td><td>${statHtml}</td><td style="color:${row.ending.color}; font-weight:bold;">${row.ending.title}</td></tr>`; });
+            let html = `<table class="calc-table"><thead><tr><th width="40%">路徑</th><th width="30%">最終狀態</th><th width="30%">結局</th></tr></thead><tbody>`;
+            lastCalculationResults.forEach(row => { 
+                let statHtml = Object.entries(row.stats).map(([k,v])=>`<span style="background:#eee; padding:2px 4px; border-radius:3px; margin-right:3px; font-size:11px;">${k}:${v}</span>`).join(''); 
+                
+                // 這裡會顯示最終持有道具
+                let itemHtml = (row.inventory && row.inventory.length > 0) ? `<br><span class="item-tag">🎒 ${row.inventory.join(', ')}</span>` : '';
+                
+                html += `<tr><td style="font-family:monospace; font-size:12px;">${row.path.join(' ➔ ')}</td><td>${statHtml}${itemHtml}</td><td style="color:${row.ending.color}; font-weight:bold;">${row.ending.title}</td></tr>`; 
+            });
             html += `</tbody></table>`; document.getElementById('calcContent').innerHTML = html;
         }
 
@@ -430,7 +489,12 @@
             let html = `<div style="background:#f9f9f9; padding:10px;">${scene.dialogues.map(d=>`<p>${d}</p>`).join('')}</div>`; 
             if (scene.choices) html += `<h4>選項</h4>` + scene.choices.map(c=>`<div style="margin-bottom:5px; border-left:3px solid #4a90e2; padding-left:5px;">
                 ${c.text} ${c.isReset ? '<span class="reset-tag">數值重置</span>' : ''} → ${c.nextScene} 
-                <br><small style="color:green">${JSON.stringify(c.effects||{})}</small></div>`).join(''); 
+                <br>
+                ${c.reqItem ? `<small style="color:#e74c3c">🔒 需持有: ${c.reqItem}</small><br>` : ''}
+                ${c.gainItems ? `<small style="color:#27ae60">🎁 獲得: ${c.gainItems.join(',')}</small><br>` : ''}
+                ${c.loseItems ? `<small style="color:#e67e22">🗑️ 消耗: ${c.loseItems.join(',')}</small><br>` : ''}
+                <small style="color:green">數值: ${JSON.stringify(c.effects||{})}</small>
+                </div>`).join(''); 
             openModal(id, html); 
         }
         window.showEndingDetails = (id) => { const e = currentStoryData.endings.find(x => x.id === id); openModal(e.title, `<p>${e.desc}</p><blockquote>${e.quote}</blockquote><pre>${JSON.stringify(e.conditions)}</pre>`); }
